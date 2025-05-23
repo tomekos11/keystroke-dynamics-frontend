@@ -23,7 +23,11 @@
         />
       </UFormField>
 
-      <UButton type="submit" color="primary" block class="mt-2">
+      <p v-if="error">
+        {{ error }}
+      </p>
+
+      <UButton type="submit" color="primary" block class="mt-2" :loading="loading">
         Zaloguj się
       </UButton>
 
@@ -42,13 +46,45 @@
   </UCard>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-const email = ref('')
-const password = ref('')
-const handleLogin = () => {
-  // obsługa logowania
-}
+<script setup lang="ts">
+import type { FetchError } from 'ofetch';
+import { useFetchWithAuth } from '../../composables/useFetchWithAuth';
+import type { User } from '~/types/types';
+import { useUserStore } from '~/stores/user';
 
-defineEmits(['switch'])
+const toast = useToast();
+const loading = ref(false);
+const error = ref('');
+
+const email = ref('');
+const password = ref('');
+
+const handleLogin = async () => {
+  loading.value = true;
+
+  try {
+
+    const user = await useFetchWithAuth<User>('/users/login', {
+      method: 'POST',
+      body: {
+        email: email.value,
+        password: password.value
+      },
+    });
+
+    useUserStore().setUser(user);
+
+    toast.add({
+      title: 'Zalogowano poprawnie',
+    });
+  } catch (err) {
+    const fetchErr = err as FetchError;
+    error.value = fetchErr.data.message;
+  } finally {
+    loading.value = false;
+  }
+  // obsługa logowania
+};
+
+defineEmits(['switch']);
 </script>

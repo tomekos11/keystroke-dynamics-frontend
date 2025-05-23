@@ -1,35 +1,35 @@
 <template>
   <div class="flex items-center justify-center min-h-[80svh]">
-      <Transition name="slide-fade" mode="out-in" @before-enter="setHeight" @after-enter="resetHeight">
-        <component
-          :is="isLogin ? LoginForm : RegisterForm"
-          :key="isLogin"
-          @switch="isLogin = !isLogin"
-        />
-      </Transition>
+    <Transition name="slide-fade" mode="out-in" @before-enter="setHeight" @after-enter="resetHeight">
+      <component
+        :is="isLogin ? LoginForm : RegisterForm"
+        :key="isLogin"
+        @switch="isLogin = !isLogin"
+      />
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
-import LoginForm from './LoginForm.vue'
-import RegisterForm from './RegisterForm.vue'
+import { ref, nextTick } from 'vue';
+import LoginForm from './LoginForm.vue';
+import RegisterForm from './RegisterForm.vue';
 
-const isLogin = ref(true)
-const minHeight = ref(0)
-const container = ref(null)
+const isLogin = ref(true);
+const minHeight = ref(0);
+const container = ref(null);
 
 function setHeight(el) {
   if (container.value) {
-    minHeight.value = container.value.offsetHeight
+    minHeight.value = container.value.offsetHeight;
     nextTick(() => {
-      minHeight.value = el.offsetHeight
-    })
+      minHeight.value = el.offsetHeight;
+    });
   }
 }
 
 function resetHeight() {
-  minHeight.value = 0
+  minHeight.value = 0;
 }
 </script>
 

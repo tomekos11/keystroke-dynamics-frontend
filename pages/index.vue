@@ -31,7 +31,8 @@
         </div>
       </div>
     </main>
-    <!-- <auth-form /> -->
+
+    <auth-form />
   </div>
 
 </template>
