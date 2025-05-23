@@ -1,11 +1,6 @@
 <template>
-  <footer class="bg-slate-950 text-white py-1 text-center flex justify-between px-2">
-    <div class="flex items-center gap-4 text-sm text-gray-200">
-      App
-    </div>
-    <div>
-      TS
-    </div>
+  <footer class="py-6 text-center text-slate-500 text-sm">
+    &copy; 2025 Keystroke Dynamics TS & MR. Wszelkie prawa zastrzeżone.
   </footer>
 </template>
 
