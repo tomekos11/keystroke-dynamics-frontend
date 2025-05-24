@@ -6,4 +6,5 @@ export interface User {
     isActive: boolean | null;
     createdAt: string | null;
     updatedAt: string | null;
+    secretWord: string | null;
   }

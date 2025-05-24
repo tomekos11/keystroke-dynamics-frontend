@@ -9,6 +9,8 @@ export const useUserStore = defineStore('user', () => {
   const createdAt = ref<User['createdAt']>(null);
   const updatedAt = ref<User['updatedAt']>(null);
 
+  const secretWord = ref<User['secretWord']>(null);
+
   const isLoggedIn = computed(() => !!email.value);
 
   const clear = () => {
@@ -19,6 +21,8 @@ export const useUserStore = defineStore('user', () => {
     isActive.value = null;
     createdAt.value = null;
     updatedAt.value = null;
+
+    secretWord.value = null;
   };
 
   const setUser = (user: User) => {
@@ -29,6 +33,8 @@ export const useUserStore = defineStore('user', () => {
     isActive.value = user.isActive;
     createdAt.value = user.createdAt;
     updatedAt.value = user.updatedAt;
+
+    secretWord.value = user.secretWord;
   };
 
   const logout = async () => {
@@ -64,6 +70,7 @@ export const useUserStore = defineStore('user', () => {
           isActive: null,
           createdAt: null,
           updatedAt: null,
+          secretWord: null,
         };
       }
     });
@@ -72,7 +79,6 @@ export const useUserStore = defineStore('user', () => {
     if (fetchedUser.value) {
       setUser(fetchedUser.value);
     }
-
   };
 
   return {
@@ -82,6 +88,7 @@ export const useUserStore = defineStore('user', () => {
     createdAt,
     updatedAt,
     isLoggedIn,
+    secretWord,
     setUser,
     fetchUser,
     clear,

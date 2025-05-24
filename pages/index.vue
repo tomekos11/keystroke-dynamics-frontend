@@ -34,8 +34,8 @@
           </span>
         </div>
         <h2 class="text-2xl font-bold mb-2 text-primary tracking-tight">Witaj Użytkowniku!</h2>
-        <p class="mb-5 text-base text-gray-500">
-          Wykryliśmy, że jesteś <span class="font-semibold text-primary">zalogowany</span>, ale nie ustawiłeś jeszcze własnego hasła.
+        <p v-if="!userStore.secretWord" class="mb-5 text-base text-gray-500">
+          Wykryliśmy, że jesteś <span class="font-semibold text-primary">zalogowany</span>, ale nie ustawiłeś jeszcze własnego sekretnego słowa.
         </p>
         <p class="mb-4 text-gray-700">
           Przejdź do 
@@ -47,7 +47,7 @@
               <UIcon name="i-lucide-badge-check" />
             </span>
             <span>
-              Ustawić swoje unikalne hasło i wyzwać innych do jego złamania.
+              Ustawić swoje unikalne sekretne słowo i wyzwać innych do jego złamania.
             </span>
           </li>
           <li class="flex items-start gap-2">
@@ -60,7 +60,7 @@
           </li>
         </ul>
         <p class="text-sm text-gray-500">
-          Zadbaj o swoje bezpieczeństwo i sprawdź, jak dobrze potrafisz łamać hasła!
+          Zadbaj o swoje bezpieczeństwo i sprawdź, jak dobrze potrafisz łamać zabezpieczenia!
         </p>
       </UCard>
     

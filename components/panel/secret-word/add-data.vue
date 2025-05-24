@@ -1,66 +1,49 @@
 <template>
-  <UCard class="w-full max-w-md mx-auto">
-    <form class="flex flex-col gap-2" @submit.prevent="handleLogin">
-      <h2 class="text-2xl font-bold mb-4 text-center">Logowanie</h2>
-      <UFormField>
-        <UInput
-          v-model="email"
-          type="email"
-          placeholder="Email"
-          required
-          class="w-[100%]"
-          icon="i-heroicons-envelope"
-        />
-      </UFormField>
-      <UFormField>
-        <UInput
-          v-model="password"
-          type="password"
-          placeholder="Hasło"
-          required
-          class="w-[100%]"
-          icon="i-heroicons-lock-closed"
-          @keydown="onPasswordKeyDown"
-          @keyup="onPasswordKeyUp"
-        />
-      </UFormField>
+  <div>
+    <p class="text-sm mb-5">
+      Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.secretWord }}</span>
+    </p>
+      
+    <UButtonGroup>
+      <UInput
+        v-model="newSample"
+        type="text"
+        @keydown="onPasswordKeyDown"
+        @keyup="onPasswordKeyUp"
+      />
 
-      <p v-if="error">
-        {{ error }}
-      </p>
+      <UButton
+        :color="newSample !== userStore.secretWord ? 'error' : 'primary'"
+        variant="subtle"
+        icon="i-lucide-clipboard"
+        label="Potwierdź"
+        :disabled="newSample !== userStore.secretWord"
+        :loading="loading"
+        @click="onSubmit"
+      />
+    </UButtonGroup>
 
-      <UButton type="submit" color="primary" block class="mt-2" :loading="loading">
-        Zaloguj się
-      </UButton>
-
-      <p class="text-center text-sm mt-2">
-        Nie masz konta?
-        <UButton
-          variant="link"
-          color="primary"
-          size="sm"
-          @click.prevent="$emit('switch')"
-        >
-          Zarejestruj się
-        </UButton>
-      </p>
-    </form>
-  </UCard>
+    <div v-if="error" class="flex items-center gap-2 justify-center text-error mt-3">
+      <UIcon name="i-lucide-circle-alert" />
+      {{ error }}
+    </div>
+      
+  </div>
 </template>
 
 <script setup lang="ts">
 import type { FetchError } from 'ofetch';
-import { useFetchWithAuth } from '../../composables/useFetchWithAuth';
+import { useFetchWithAuth } from '#imports';
 import type { User } from '~/types/types';
 import { useUserStore } from '~/stores/user';
+
+const userStore = useUserStore();
+
+const newSample = ref('');
 
 const toast = useToast();
 const loading = ref(false);
 const error = ref('');
-
-const email = ref('');
-const password = ref('');
-const router = useRouter();
 
 // --- LOGIKA ŚLEDZENIA KLAWISZY ---
 type KeyPressEntry = {
@@ -256,35 +239,35 @@ const validateAndCorrectKeyPresses = (entries: KeyPressEntry[]): KeyPressEntry[]
 
 
 // Resetowanie przy wysyłaniu formularza
-const handleLogin = async () => {
+const onSubmit = async () => {
   loading.value = true;
   try {
     const correctedKeyPresses = validateAndCorrectKeyPresses(keyPresses.value);
 
-    const user = await useFetchWithAuth<User>('/users/login', {
+    await useFetchWithAuth<User>('/users/add-data', {
       method: 'POST',
       body: {
-        email: email.value,
-        password: password.value,
+        secretWord: newSample.value,
         keyPresses: correctedKeyPresses
       },
     });
 
-    useUserStore().setUser(user);
+    newSample.value = '';
 
     toast.add({
-      title: 'Zalogowano poprawnie',
+      title: 'Poprawnie dodano próbkę danych!',
     });
-    
-    router.replace('/');
 
   } catch (err) {
     const fetchErr = err as FetchError;
     error.value = fetchErr.data.message;
+
+    toast.add({
+      title: error.value
+    });
   } finally {
     loading.value = false;
   }
 };
-
-defineEmits(['switch']);
 </script>
+
