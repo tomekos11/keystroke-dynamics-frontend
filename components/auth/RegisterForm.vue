@@ -55,6 +55,10 @@
         </ul>
       </p>
 
+      <p v-if="error">
+        {{ error }}
+      </p>
+      
       <UButton type="submit" block class="mt-2">
         Zarejestruj się
       </UButton>
@@ -76,12 +80,41 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import type { FetchError } from 'ofetch';
+import type { User } from '~/types/types';
+
+const loading = ref(false);
+const toast = useToast();
+const error = ref('');
+
 const email = ref('');
 const repeatPassword = ref('');
 
-const handleRegister = () => {
-  // obsługa rejestracji
+const handleRegister = async () => {
+  loading.value = true;
+  try {
+    const user = await useFetchWithAuth<User>('/users/login', {
+      method: 'POST',
+      body: {
+        email: email.value,
+        password: password.value,
+      },
+    });
+
+    useUserStore().setUser(user);
+
+    toast.add({
+      title: 'Zalogowano poprawnie',
+    });
+
+  } catch (err) {
+    const fetchErr = err as FetchError;
+    error.value = fetchErr.data.message;
+  } finally {
+    loading.value = false;
+  }
 };
+
 
 defineEmits(['switch']);
 
