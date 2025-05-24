@@ -83,6 +83,8 @@ import { ref } from 'vue';
 import type { FetchError } from 'ofetch';
 import type { User } from '~/types/types';
 
+const router = useRouter();
+
 const loading = ref(false);
 const toast = useToast();
 const error = ref('');
@@ -104,8 +106,10 @@ const handleRegister = async () => {
     useUserStore().setUser(user);
 
     toast.add({
-      title: 'Zalogowano poprawnie',
+      title: 'Poprawnie zarejestrowano',
     });
+
+    router.replace('/');
 
   } catch (err) {
     const fetchErr = err as FetchError;

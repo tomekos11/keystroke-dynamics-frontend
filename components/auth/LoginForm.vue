@@ -76,6 +76,33 @@ type KeyPressEntry = {
   }
 };
 
+const shiftSpecialChars: Record<string, string> = {
+  '1': '!',
+  '2': '@',
+  '3': '#',
+  '4': '$',
+  '5': '%',
+  '6': '^',
+  '7': '&',
+  '8': '*',
+  '9': '(',
+  '0': ')',
+  '`': '~',
+  '-': '_',
+  '=': '+',
+  '[': '{',
+  ']': '}',
+  '\\': '|',
+  ';': ':',
+  '\'': '"',
+  ',': '<',
+  '.': '>',
+  '/': '?',
+};
+
+// Lista klawiszy modyfikujących, których NIE zapisujemy
+const modifierKeys = ['Shift', 'Control', 'Alt', 'Meta'];
+
 const keyPresses = ref<KeyPressEntry[]>([]);
 let lastReleasedAt: Date | null = null;
 const activeKeys = new Map<string, { pressedAt: Date, modifiers: any }>();
@@ -88,6 +115,11 @@ function resolveKeyValue(e: KeyboardEvent): string {
   if (e.altKey && !e.shiftKey && e.key.toLowerCase() === 'c') return 'ć';
   if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'c') return 'Ć';
   // ...dodaj kolejne mapowania wg potrzeb...
+
+  // Mapowanie znaków specjalnych dla Shift+cyfra/znak
+  if (e.shiftKey && Object.prototype.hasOwnProperty.call(shiftSpecialChars, e.key)) {
+    return shiftSpecialChars[e.key];
+  }
 
   // Jeśli Shift, zwracamy wielką literę
   if (e.shiftKey && e.key.length === 1) return e.key.toUpperCase();
@@ -113,9 +145,6 @@ function onPasswordKeyDown(e: KeyboardEvent) {
     }
   });
 }
-
-// Lista klawiszy modyfikujących, których NIE zapisujemy
-const modifierKeys = ['Shift', 'Control', 'Alt', 'Meta'];
 
 // Obsługa puszczenia klawisza
 function onPasswordKeyUp(e: KeyboardEvent) {
