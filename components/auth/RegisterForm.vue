@@ -58,7 +58,7 @@
       <p v-if="error">
         {{ error }}
       </p>
-      
+
       <UButton type="submit" block class="mt-2">
         Zarejestruj się
       </UButton>
@@ -93,7 +93,7 @@ const repeatPassword = ref('');
 const handleRegister = async () => {
   loading.value = true;
   try {
-    const user = await useFetchWithAuth<User>('/users/login', {
+    const user = await useFetchWithAuth<User>('/users/register', {
       method: 'POST',
       body: {
         email: email.value,
