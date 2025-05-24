@@ -75,17 +75,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const email = ref('')
-const repeatPassword = ref('')
+import { ref } from 'vue';
+const email = ref('');
+const repeatPassword = ref('');
 
 const handleRegister = () => {
   // obsługa rejestracji
-}
+};
 
-defineEmits(['switch'])
+defineEmits(['switch']);
 
-const password = ref('')
+const password = ref('');
 
 function checkStrength(str: string) {
   const requirements = [
@@ -93,10 +93,10 @@ function checkStrength(str: string) {
     { regex: /\d/, text: 'Co najmniej 1 numer' },
     { regex: /[a-z]/, text: 'Co najmniej 1 małą literę' },
     { regex: /[A-Z]/, text: 'Co najmniej 1 dużą literę' }
-  ]
+  ];
 
-  return requirements.map(req => ({ met: req.regex.test(str), text: req.text }))
+  return requirements.map(req => ({ met: req.regex.test(str), text: req.text }));
 }
 
-const strength = computed(() => checkStrength(password.value))
+const strength = computed(() => checkStrength(password.value));
 </script>

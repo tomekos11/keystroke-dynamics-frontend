@@ -1,5 +1,11 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950">
+  <div>
+    <UBreadcrumb :items="items" class="m-4">
+      <template #separator>
+        <span class="mx-2 text-(--ui-text-muted)">/</span>
+      </template>
+    </UBreadcrumb>
+      
     <!-- Header -->
     <header class="py-10 px-4 text-center">
       <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
@@ -11,14 +17,14 @@
     </header>
 
     <!-- Main Tiles -->
-    <main class="flex-1 flex flex-col items-center justify-center gap-10 px-4">
+    <div class="flex-1 flex flex-col items-center justify-center gap-10 px-4">
 
       <main-view-cards />
 
       <main-view-login-register-buttons />
 
       <!-- Film edukacyjny -->
-      <div class="w-full max-w-3xl mt-10 flex flex-col items-center">
+      <div class="w-full max-w-3xl mt-10 flex flex-col items-center mb-5">
         <h3 class="text-2xl font-bold text-white mb-4">Zobacz, jak działa biometryka behawioralna</h3>
         <div class="w-full rounded-lg overflow-hidden shadow-lg border border-slate-800 min-h-[450px]">
           <iframe
@@ -30,13 +36,20 @@
           />
         </div>
       </div>
-    </main>
-
-    <auth-form />
+    </div>
   </div>
 
 </template>
 
 <script setup lang="ts">
+import type { BreadcrumbItem } from '@nuxt/ui';
 
+const items: BreadcrumbItem[] = [
+  {
+    label: 'Strona główna',
+    to: '/',
+    icon: 'i-heroicons-home',
+    class: 'text-secondary'
+  },
+];
 </script>

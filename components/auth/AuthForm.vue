@@ -4,7 +4,7 @@
       <component
         :is="isLogin ? LoginForm : RegisterForm"
         :key="isLogin"
-        @switch="isLogin = !isLogin"
+        @switch="onSwitch"
       />
     </Transition>
   </div>
@@ -15,22 +15,32 @@ import { ref, nextTick } from 'vue';
 import LoginForm from './LoginForm.vue';
 import RegisterForm from './RegisterForm.vue';
 
-const isLogin = ref(true);
+const route = useRoute();
+const router = useRouter();
+
+const isLogin = ref(route.query.mode === 'login' ? true : false);
 const minHeight = ref(0);
 const container = ref(null);
 
-function setHeight(el) {
+const setHeight = (el) => {
   if (container.value) {
     minHeight.value = container.value.offsetHeight;
     nextTick(() => {
       minHeight.value = el.offsetHeight;
     });
   }
-}
+};
 
-function resetHeight() {
+const resetHeight = () => {
   minHeight.value = 0;
-}
+};
+
+const onSwitch = () => {
+  isLogin.value = !isLogin.value;
+  router.replace(isLogin.value ? '/auth?mode=login' : '/auth?mode=register');
+};
+
+onMounted(() => console.log('mounted'));
 </script>
 
 <style scoped>

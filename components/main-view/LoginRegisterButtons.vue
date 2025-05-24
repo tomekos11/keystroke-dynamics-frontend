@@ -8,7 +8,7 @@
         class="flex-1 justify-evenly  rounded-lg py-6 transition-transform hover:scale-[1.025]"
         size="xl"
         variant="ghost"
-        to="/login"
+        to="/auth?mode=login"
         icon="i-heroicons-arrow-right"
         trailing
       >
@@ -25,7 +25,7 @@
         class="flex-1 justify-evenly rounded-lg py-6 transition-transform hover:scale-[1.025]"
         size="xl"
         variant="ghost"
-        to="/register"
+        to="/auth?mode=register"
         icon="i-heroicons-user-plus"
         trailing
       >
