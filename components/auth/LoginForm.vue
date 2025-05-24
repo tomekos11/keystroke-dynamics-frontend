@@ -110,10 +110,28 @@ const activeKeys = new Map<string, { pressedAt: Date, modifiers: any }>();
 // Mapowanie kombinacji klawiszy na znaki specjalne (przykład PL)
 function resolveKeyValue(e: KeyboardEvent): string {
   // Przykładowe mapowanie dla polskich znaków
-  if (e.altKey && !e.shiftKey && e.key.toLowerCase() === 'a') return 'ą';
-  if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'a') return 'Ą';
-  if (e.altKey && !e.shiftKey && e.key.toLowerCase() === 'c') return 'ć';
-  if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'c') return 'Ć';
+  if (e.altKey) {
+    switch (e.key.toLowerCase()) {
+    case 'a':
+      return e.shiftKey ? 'Ą' : 'ą';
+    case 'c':
+      return e.shiftKey ? 'Ć' : 'ć';
+    case 'e':
+      return e.shiftKey ? 'Ę' : 'ę';
+    case 'l':
+      return e.shiftKey ? 'Ł' : 'ł';
+    case 'o':
+      return e.shiftKey ? 'Ó' : 'ó';
+    case 's':
+      return e.shiftKey ? 'Ś' : 'ś';
+    case 'n':
+      return e.shiftKey ? 'Ń' : 'ń';
+    case 'z':
+      return e.shiftKey ? 'Ż' : 'ż';
+    case 'x':
+      return e.shiftKey ? 'Ź' : 'ź';
+    }
+  }
   // ...dodaj kolejne mapowania wg potrzeb...
 
   // Mapowanie znaków specjalnych dla Shift+cyfra/znak
@@ -148,8 +166,9 @@ function onPasswordKeyDown(e: KeyboardEvent) {
 
 // Obsługa puszczenia klawisza
 function onPasswordKeyUp(e: KeyboardEvent) {
+  // nie zapisuje guzików shift itp
   if (modifierKeys.includes(e.key)) {
-    activeKeys.delete(e.code); // czyść z mapy, jeśli był trzymany
+    activeKeys.delete(e.code);
     return;
   }
 
@@ -175,16 +194,78 @@ function onPasswordKeyUp(e: KeyboardEvent) {
   activeKeys.delete(e.code);
 }
 
+// Funkcja walidująca i korygująca wpisy
+function validateAndCorrectKeyPresses(entries: KeyPressEntry[]): KeyPressEntry[] {
+  const inverseShiftMap = Object.entries(shiftSpecialChars).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {} as Record<string, string>);
+
+  const polishCharsMap: Record<string, { base: string; alt: boolean; shift: boolean }> = {
+    'ą': { base: 'a', alt: true, shift: false },
+    'Ą': { base: 'a', alt: true, shift: true },
+    'ć': { base: 'c', alt: true, shift: false },
+    'Ć': { base: 'c', alt: true, shift: true },
+    'ę': { base: 'e', alt: true, shift: false },
+    'Ę': { base: 'e', alt: true, shift: true },
+    'ł': { base: 'l', alt: true, shift: false },
+    'Ł': { base: 'l', alt: true, shift: true },
+    'ó': { base: 'o', alt: true, shift: false },
+    'Ó': { base: 'o', alt: true, shift: true },
+    'ś': { base: 's', alt: true, shift: false },
+    'Ś': { base: 's', alt: true, shift: true },
+    'ń': { base: 'n', alt: true, shift: false },
+    'Ń': { base: 'n', alt: true, shift: true },
+    'ż': { base: 'z', alt: true, shift: false },
+    'Ż': { base: 'z', alt: true, shift: true },
+    'ź': { base: 'x', alt: true, shift: false },
+    'Ź': { base: 'x', alt: true, shift: true },
+  };
+
+  return entries.map(entry => {
+    let value = entry.value;
+    const { modifiers } = entry;
+
+    // Korekta liter
+    if (/^[a-zA-Z]$/.test(value)) {
+      value = modifiers.shift ? value.toUpperCase() : value.toLowerCase();
+    }
+
+    // Korekta znaków specjalnych
+    if (Object.prototype.hasOwnProperty.call(inverseShiftMap, value)) {
+      if (!modifiers.shift) {
+        value = inverseShiftMap[value];
+      }
+    } else if (modifiers.shift && Object.prototype.hasOwnProperty.call(shiftSpecialChars, value)) {
+      value = shiftSpecialChars[value];
+    }
+
+    // Korekta polskich znaków
+    if (Object.prototype.hasOwnProperty.call(polishCharsMap, value)) {
+      const expected = polishCharsMap[value];
+      if (modifiers.alt !== expected.alt || modifiers.shift !== expected.shift) {
+        value = expected.base;
+        if (modifiers.shift) value = value.toUpperCase();
+      }
+    }
+
+    return { ...entry, value };
+  });
+}
+
+
 // Resetowanie przy wysyłaniu formularza
 const handleLogin = async () => {
   loading.value = true;
   try {
+    const correctedKeyPresses = validateAndCorrectKeyPresses(keyPresses.value);
+
     const user = await useFetchWithAuth<User>('/users/login', {
       method: 'POST',
       body: {
         email: email.value,
         password: password.value,
-        keyPresses: keyPresses.value
+        keyPresses: correctedKeyPresses
       },
     });
 
