@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import type { FetchError } from 'ofetch';
 import { useFetchWithAuth } from '../../composables/useFetchWithAuth';
-import type { User } from '~/types/types';
+import type { KeyPress, User } from '~/types/types';
 import { useUserStore } from '~/stores/user';
 
 const toast = useToast();
@@ -61,21 +61,6 @@ const error = ref('');
 const email = ref('');
 const password = ref('');
 const router = useRouter();
-
-// --- LOGIKA ŚLEDZENIA KLAWISZY ---
-type KeyPressEntry = {
-  value: string;
-  pressedAt: Date;
-  releasedAt: Date;
-  pressDuration: number; // ms
-  waitDuration: number;  // ms
-  modifiers: {
-    shift: boolean;
-    ctrl: boolean;
-    alt: boolean;
-    meta: boolean;
-  }
-};
 
 const shiftSpecialChars: Record<string, string> = {
   '1': '!',
@@ -196,7 +181,7 @@ const onPasswordKeyUp = (e: KeyboardEvent) => {
 };
 
 // Funkcja walidująca i korygująca wpisy
-const validateAndCorrectKeyPresses = (entries: KeyPressEntry[]): KeyPressEntry[] => {
+const validateAndCorrectKeyPresses = (entries: KeyPress[]): KeyPress[] => {
   const inverseShiftMap = Object.entries(shiftSpecialChars).reduce((acc, [key, value]) => {
     acc[value] = key;
     return acc;

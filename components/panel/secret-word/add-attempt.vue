@@ -4,13 +4,29 @@
       Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.secretWord }}</span>
     </p>
 
-    <UButtonGroup>
-      <UInput v-model="newSample" type="text" @keydown="onPasswordKeyDown" @keyup="onPasswordKeyUp" />
+    <UForm :state="{}" @submit="onSubmit">
+      <UButtonGroup>
+        <UInput v-model="newSample" type="text" @keydown="onPasswordKeyDown" @keyup="onPasswordKeyUp" />
+  
+        <UTooltip>
+          <UButton
+            type="submit"
+            :color="newSample !== userStore.secretWord ? 'neutral' : 'primary'" variant="subtle"
+            icon="i-lucide-clipboard" label="Potwierdź" :disabled="newSample !== userStore.secretWord" :loading="loading"
+          />
+          <template v-if="newSample !== userStore.secretWord" #content>
+            <template v-if="!newSample">
+              Wpisany ciąg znaków jest pusty
+            </template>
+            <template v-else>
+              Wpisany ciąg znaków <strong class="text-primary">{{ newSample }}</strong> nie zgadza się z ustawionym słowem sekretnym
+            </template>
+          </template>
+        </UTooltip>
+      </UButtonGroup>
+    </UForm>
 
-      <UButton :color="newSample !== userStore.secretWord ? 'error' : 'primary'" variant="subtle"
-        icon="i-lucide-clipboard" label="Potwierdź" :disabled="newSample !== userStore.secretWord" :loading="loading"
-        @click="onSubmit" />
-    </UButtonGroup>
+    <panel-secret-word-attempts-table />
 
     <div v-if="error" class="flex items-center gap-2 justify-center text-error mt-3">
       <UIcon name="i-lucide-circle-alert" />
@@ -22,11 +38,12 @@
 
 <script setup lang="ts">
 import type { FetchError } from 'ofetch';
-import { useFetchWithAuth } from '#imports';
-import type { User } from '~/types/types';
+import { useFetchWithAuth, useAttemptsStore  } from '#imports';
+import type { Attempt } from '~/types/types';
 import { useUserStore } from '~/stores/user';
 
 const userStore = useUserStore();
+const attemptsStore = useAttemptsStore();
 
 const newSample = ref('');
 
@@ -85,24 +102,24 @@ const resolveKeyValue = (e: KeyboardEvent): string => {
   // Przykładowe mapowanie dla polskich znaków
   if (e.altKey) {
     switch (e.key.toLowerCase()) {
-      case 'a':
-        return e.shiftKey ? 'Ą' : 'ą';
-      case 'c':
-        return e.shiftKey ? 'Ć' : 'ć';
-      case 'e':
-        return e.shiftKey ? 'Ę' : 'ę';
-      case 'l':
-        return e.shiftKey ? 'Ł' : 'ł';
-      case 'o':
-        return e.shiftKey ? 'Ó' : 'ó';
-      case 's':
-        return e.shiftKey ? 'Ś' : 'ś';
-      case 'n':
-        return e.shiftKey ? 'Ń' : 'ń';
-      case 'z':
-        return e.shiftKey ? 'Ż' : 'ż';
-      case 'x':
-        return e.shiftKey ? 'Ź' : 'ź';
+    case 'a':
+      return e.shiftKey ? 'Ą' : 'ą';
+    case 'c':
+      return e.shiftKey ? 'Ć' : 'ć';
+    case 'e':
+      return e.shiftKey ? 'Ę' : 'ę';
+    case 'l':
+      return e.shiftKey ? 'Ł' : 'ł';
+    case 'o':
+      return e.shiftKey ? 'Ó' : 'ó';
+    case 's':
+      return e.shiftKey ? 'Ś' : 'ś';
+    case 'n':
+      return e.shiftKey ? 'Ń' : 'ń';
+    case 'z':
+      return e.shiftKey ? 'Ż' : 'ż';
+    case 'x':
+      return e.shiftKey ? 'Ź' : 'ź';
     }
   }
   // ...dodaj kolejne mapowania wg potrzeb...
@@ -239,7 +256,7 @@ const onSubmit = async () => {
   try {
     const correctedKeyPresses = validateAndCorrectKeyPresses(keyPresses.value);
 
-    await useFetchWithAuth<User>('/users/add-data', {
+    const { attempt: newAttempt } = await useFetchWithAuth<{attempt: Attempt}>('/users/add-data', {
       method: 'POST',
       body: {
         secretWord: newSample.value,
@@ -247,6 +264,7 @@ const onSubmit = async () => {
       },
     });
 
+    attemptsStore.attempts.unshift(newAttempt);
     clearKeyPresses();
 
     toast.add({

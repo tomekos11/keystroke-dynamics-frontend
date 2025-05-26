@@ -11,6 +11,8 @@ export const useUserStore = defineStore('user', () => {
 
   const secretWord = ref<User['secretWord']>(null);
 
+  const attempts = ref<User['attempts']>(null);
+
   const isLoggedIn = computed(() => !!email.value);
 
   const clear = () => {
@@ -23,6 +25,7 @@ export const useUserStore = defineStore('user', () => {
     updatedAt.value = null;
 
     secretWord.value = null;
+    attempts.value = null;
   };
 
   const setUser = (user: User) => {
@@ -35,6 +38,7 @@ export const useUserStore = defineStore('user', () => {
     updatedAt.value = user.updatedAt;
 
     secretWord.value = user.secretWord;
+    attempts.value = user.attempts || [];
   };
 
   const logout = async () => {
@@ -71,6 +75,7 @@ export const useUserStore = defineStore('user', () => {
           createdAt: null,
           updatedAt: null,
           secretWord: null,
+          attempts: null,
         };
       }
     });
@@ -89,6 +94,7 @@ export const useUserStore = defineStore('user', () => {
     updatedAt,
     isLoggedIn,
     secretWord,
+    attempts,
     setUser,
     fetchUser,
     clear,

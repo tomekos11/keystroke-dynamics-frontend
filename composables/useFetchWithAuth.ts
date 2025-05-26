@@ -39,19 +39,19 @@ export const useFetchWithAuth = async <T>(url: string, options: any = {}): Promi
         });
       }
     }
-    else {
-      const shouldRedirect = 
-        error?.response?.status === 500 ||
-        error.message?.includes('Failed to fetch') ||
-        error.message?.includes('ERR_CONNECTION_REFUSED');
+    // else {
+    //   const shouldRedirect = 
+    //     error?.response?.status === 500 ||
+    //     error.message?.includes('Failed to fetch') ||
+    //     error.message?.includes('ERR_CONNECTION_REFUSED');
 
-      if (shouldRedirect) {
-        // return navigateTo('/500');
+    //   if (shouldRedirect) {
+    //     // return navigateTo('/500');
 
-        await navigateTo('/500', { redirectCode: 302, replace: true });
-        throw new Error('Client redirect triggered'); // 👈 Nowy błąd
-      }
-    }
+    //     await navigateTo('/500', { redirectCode: 302, replace: true });
+    //     throw new Error('Client redirect triggered'); // 👈 Nowy błąd
+    //   }
+    // }
 
     throw error;
   });
