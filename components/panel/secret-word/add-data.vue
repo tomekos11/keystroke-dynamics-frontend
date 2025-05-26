@@ -3,31 +3,20 @@
     <p class="text-sm mb-5">
       Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.secretWord }}</span>
     </p>
-      
-    <UButtonGroup>
-      <UInput
-        v-model="newSample"
-        type="text"
-        @keydown="onPasswordKeyDown"
-        @keyup="onPasswordKeyUp"
-      />
 
-      <UButton
-        :color="newSample !== userStore.secretWord ? 'error' : 'primary'"
-        variant="subtle"
-        icon="i-lucide-clipboard"
-        label="Potwierdź"
-        :disabled="newSample !== userStore.secretWord"
-        :loading="loading"
-        @click="onSubmit"
-      />
+    <UButtonGroup>
+      <UInput v-model="newSample" type="text" @keydown="onPasswordKeyDown" @keyup="onPasswordKeyUp" />
+
+      <UButton :color="newSample !== userStore.secretWord ? 'error' : 'primary'" variant="subtle"
+        icon="i-lucide-clipboard" label="Potwierdź" :disabled="newSample !== userStore.secretWord" :loading="loading"
+        @click="onSubmit" />
     </UButtonGroup>
 
     <div v-if="error" class="flex items-center gap-2 justify-center text-error mt-3">
       <UIcon name="i-lucide-circle-alert" />
       {{ error }}
     </div>
-      
+
   </div>
 </template>
 
@@ -96,24 +85,24 @@ const resolveKeyValue = (e: KeyboardEvent): string => {
   // Przykładowe mapowanie dla polskich znaków
   if (e.altKey) {
     switch (e.key.toLowerCase()) {
-    case 'a':
-      return e.shiftKey ? 'Ą' : 'ą';
-    case 'c':
-      return e.shiftKey ? 'Ć' : 'ć';
-    case 'e':
-      return e.shiftKey ? 'Ę' : 'ę';
-    case 'l':
-      return e.shiftKey ? 'Ł' : 'ł';
-    case 'o':
-      return e.shiftKey ? 'Ó' : 'ó';
-    case 's':
-      return e.shiftKey ? 'Ś' : 'ś';
-    case 'n':
-      return e.shiftKey ? 'Ń' : 'ń';
-    case 'z':
-      return e.shiftKey ? 'Ż' : 'ż';
-    case 'x':
-      return e.shiftKey ? 'Ź' : 'ź';
+      case 'a':
+        return e.shiftKey ? 'Ą' : 'ą';
+      case 'c':
+        return e.shiftKey ? 'Ć' : 'ć';
+      case 'e':
+        return e.shiftKey ? 'Ę' : 'ę';
+      case 'l':
+        return e.shiftKey ? 'Ł' : 'ł';
+      case 'o':
+        return e.shiftKey ? 'Ó' : 'ó';
+      case 's':
+        return e.shiftKey ? 'Ś' : 'ś';
+      case 'n':
+        return e.shiftKey ? 'Ń' : 'ń';
+      case 'z':
+        return e.shiftKey ? 'Ż' : 'ż';
+      case 'x':
+        return e.shiftKey ? 'Ź' : 'ź';
     }
   }
   // ...dodaj kolejne mapowania wg potrzeb...
@@ -130,7 +119,7 @@ const resolveKeyValue = (e: KeyboardEvent): string => {
 };
 
 // Obsługa naciśnięcia klawisza
-const onPasswordKeyDown =(e: KeyboardEvent) => {
+const onPasswordKeyDown = (e: KeyboardEvent) => {
   // Ignoruj powtarzające się naciśnięcia (trzymanie klawisza)
   if (e.repeat) return;
   const now = new Date();
@@ -237,6 +226,12 @@ const validateAndCorrectKeyPresses = (entries: KeyPressEntry[]): KeyPressEntry[]
   });
 };
 
+const clearKeyPresses = () => {
+  newSample.value = '';
+  keyPresses.value = [];
+  lastReleasedAt = null;
+  activeKeys.clear();
+};
 
 // Resetowanie przy wysyłaniu formularza
 const onSubmit = async () => {
@@ -252,15 +247,16 @@ const onSubmit = async () => {
       },
     });
 
-    newSample.value = '';
+    clearKeyPresses();
 
     toast.add({
       title: 'Poprawnie dodano próbkę danych!',
     });
-
+    error.value = '';
   } catch (err) {
     const fetchErr = err as FetchError;
     error.value = fetchErr.data.message;
+    clearKeyPresses();
 
     toast.add({
       title: error.value
@@ -270,4 +266,3 @@ const onSubmit = async () => {
   }
 };
 </script>
-
