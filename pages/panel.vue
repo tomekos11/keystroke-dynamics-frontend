@@ -16,7 +16,7 @@
       v-model="active"
       :items="items"
       variant="link"
-      class="gap-4 mt-10"
+      class="gap-4 mt-10 flex-wrap"
       :ui="{ trigger: 'grow' }"
     >
       <template #fill-data="{ item }">
@@ -63,25 +63,39 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const items = [
   {
-    label: 'Uzupełnij profil użytkownika',
+    label: 'Profil użytkownika',
     description: 'Zmień swoje dane osobowe',
     icon: 'i-lucide-user',
     slot: 'fill-data' as const,
     value: 'profile'
   },
   {
-    label: 'Twoje sekretne słowo',
+    label: 'Sekretne słowo',
     description: 'Ustaw lub zmień swoje sekretne słowo',
     icon: 'i-lucide-lock',
     slot: 'set-secret-word' as const,
     value: 'secret'
   },
   {
-    label: 'Złam słowo innego użytkownika',
+    label: 'Zabawa łamania',
     description: 'Spróbuj odgadnąć sekretne słowo innego użytkownika',
-    icon: 'i-lucide-lock',
+    icon: 'i-lucide-lock-open',
     slot: 'password' as const,
     value: 'break'
+  },
+  {
+    label: 'Statystyki',
+    description: 'Statystyki',
+    icon: 'i-lucide-chart-no-axes-column-decreasing',
+    slot: 'stats' as const,
+    value: 'stats'
+  },
+  {
+    label: 'Modele',
+    description: 'Modele',
+    icon: 'i-lucide-waypoints',
+    slot: 'models' as const,
+    value: 'models'
   }
 ] satisfies TabsItem[];
 

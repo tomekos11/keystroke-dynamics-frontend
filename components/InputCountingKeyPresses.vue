@@ -6,7 +6,10 @@
 import type { KeyPress } from '~/types/types';
 
 
-const newSample = ref('');
+const newSample = defineModel<string>({
+  required: true
+});
+
 const loading = ref(false);
 const error = ref('');
 

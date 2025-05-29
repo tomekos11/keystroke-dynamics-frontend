@@ -74,20 +74,16 @@
             <UCard class="flex justify-center">
               <UFormField>
                 <template #label>
-                  Wpisz hasło <b class="text-primary">{{ selectedUser?.secretWord }}</b>
+                  Wpisz sekret <b class="text-primary">{{ selectedUser?.secretWord }}</b>
                 </template>
   
-                <!-- <UInput
+                <input-counting-key-presses
+                  ref="input-counting-key-presses"
                   v-model="secret"
-                  placeholder="Wyszukaj użytkownika"
-                  icon="i-heroicons-magnifying-glass"
-                  class="mt-2"
-                  :color="secret === selectedUser?.secretWord ? 'success' : 'neutral'"
-                  @keydown="onSecretKeyDown"
-                  @keyup="onSecretKeyUp"
-                />-->
-
-                <input-counting-key-presses ref="input-counting-key-presses" />
+                  placeholder="Wpisz sekret"
+                  icon="i-lucide-lock-open"
+                  class="mt-2" :color="secret === selectedUser?.secretWord ? 'success' : 'neutral'"
+                />
 
                 <template #help>
                   <ul>
@@ -106,6 +102,15 @@
                       </span>
                       <span>
                         Liczenie czasu kończy się przy kliknięciu Enter
+                      </span>
+                    </li>
+
+                    <li class="flex items-start gap-2">
+                      <span class="text-primary text-lg mt-0.5">
+                        <UIcon name="i-lucide-badge-check" />
+                      </span>
+                      <span>
+                        Pomyłki potrafią zepsuć wynik, zaleca się uważanie na nie
                       </span>
                     </li>
                   </ul>
@@ -151,6 +156,7 @@
 </template>
 
 <script setup lang="ts">
+import type { FetchError } from 'ofetch';
 import type { UserWithoutAttempts } from '~/types/types';
 
 const searchTerm = ref('');
@@ -213,6 +219,7 @@ const onSubmit = () => {
   try {
     const correctedKeyPresses = input.value.validateAndCorrectKeyPresses(input.value.keyPresses);
 
+    // TODO dodac endpoint
     console.log(correctedKeyPresses);
     // const { attempt: newAttempt } = await useFetchWithAuth<{attempt: Attempt}>('/users/add-data', {
     //   method: 'POST',
@@ -222,7 +229,7 @@ const onSubmit = () => {
     //   },
     // });
 
-    // attemptsStore.attempts.unshift(newAttempt);
+    // pozniej dodac do statystyk na tym froncie jakos
     input.value.clearKeyPresses();
 
     toast.add({
@@ -244,7 +251,13 @@ const onSubmit = () => {
 
 watch(selectedUser, (nv) => {
   // usun tutaj kliki klawiszy
-  if(!nv?.secretWord) {
+  secret.value = '';
+
+  if(input.value) {
+    input.value.clearKeyPresses();
+  }
+
+  if(nv && !nv.secretWord) {
     showForm.value = false;
   }
 });
