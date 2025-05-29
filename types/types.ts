@@ -19,14 +19,28 @@ export interface Attempt {
     keyPresses: KeyPress[]
   }
   
-export interface User {
-    id: number | null;
-    email: string | null;
-    firstName: string | null;
-    lastName: string | null;
-    isActive: boolean | null;
-    createdAt: string | null;
-    updatedAt: string | null;
-    secretWord: string | null;
-    attempts: Attempt[] | null;
-  }
+
+
+export interface UserWithoutAttempts {
+  id: number;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  secretWord: string;
+}
+
+
+export interface User{
+  id: number | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  isActive: boolean | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  secretWord: string | null;
+  attempts: Attempt[] | null;
+}

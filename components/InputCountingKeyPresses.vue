@@ -1,55 +1,16 @@
 <template>
-  <div>
-    <p class="text-sm mb-5">
-      Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.secretWord }}</span>
-    </p>
-
-    <UForm :state="{}" @submit="onSubmit">
-      <UButtonGroup>
-        <UInput v-model="newSample" type="text" @keydown="onPasswordKeyDown" @keyup="onPasswordKeyUp" />
-  
-        <UTooltip>
-          <UButton
-            type="submit"
-            :color="newSample !== userStore.secretWord ? 'neutral' : 'primary'" variant="subtle"
-            icon="i-lucide-clipboard" label="Potwierdź" :disabled="newSample !== userStore.secretWord" :loading="loading"
-          />
-          <template v-if="newSample !== userStore.secretWord" #content>
-            <template v-if="!newSample">
-              Wpisany ciąg znaków jest pusty
-            </template>
-            <template v-else>
-              Wpisany ciąg znaków <strong class="text-primary">{{ newSample }}</strong> nie zgadza się z ustawionym słowem sekretnym
-            </template>
-          </template>
-        </UTooltip>
-      </UButtonGroup>
-    </UForm>
-
-    <panel-secret-word-attempts-table />
-
-    <div v-if="error" class="flex items-center gap-2 justify-center text-error mt-3">
-      <UIcon name="i-lucide-circle-alert" />
-      {{ error }}
-    </div>
-
-  </div>
+  <UInput v-model="newSample" type="text" @keydown="onKeyDown" @keyup="onKeyUp" />
 </template>
 
 <script setup lang="ts">
-import type { FetchError } from 'ofetch';
-import { useFetchWithAuth, useAttemptsStore  } from '#imports';
-import type { Attempt } from '~/types/types';
-import { useUserStore } from '~/stores/user';
+import type { KeyPress } from '~/types/types';
 
-const userStore = useUserStore();
-const attemptsStore = useAttemptsStore();
 
 const newSample = ref('');
-
-const toast = useToast();
 const loading = ref(false);
 const error = ref('');
+
+const keyPresses = ref<KeyPress[]>([]);
 
 const shiftSpecialChars: Record<string, string> = {
   '1': '!',
@@ -78,7 +39,6 @@ const shiftSpecialChars: Record<string, string> = {
 // Lista klawiszy modyfikujących, których NIE zapisujemy
 const modifierKeys = ['Shift', 'Control', 'Alt', 'Meta'];
 
-const keyPresses = ref<KeyPressEntry[]>([]);
 let lastReleasedAt: Date | null = null;
 const activeKeys = new Map<string, { pressedAt: Date, modifiers: any }>();
 
@@ -121,7 +81,7 @@ const resolveKeyValue = (e: KeyboardEvent): string => {
 };
 
 // Obsługa naciśnięcia klawisza
-const onPasswordKeyDown = (e: KeyboardEvent) => {
+const onKeyDown = (e: KeyboardEvent) => {
   // Ignoruj powtarzające się naciśnięcia (trzymanie klawisza)
   if (e.repeat) return;
   const now = new Date();
@@ -140,7 +100,7 @@ const onPasswordKeyDown = (e: KeyboardEvent) => {
 };
 
 // Obsługa puszczenia klawisza
-const onPasswordKeyUp = (e: KeyboardEvent) => {
+const onKeyUp = (e: KeyboardEvent) => {
   // nie zapisuje guzików shift itp
   if (modifierKeys.includes(e.key)) {
     activeKeys.delete(e.code);
@@ -170,7 +130,7 @@ const onPasswordKeyUp = (e: KeyboardEvent) => {
 };
 
 // Funkcja walidująca i korygująca wpisy
-const validateAndCorrectKeyPresses = (entries: KeyPressEntry[]): KeyPressEntry[] => {
+const validateAndCorrectKeyPresses = (entries: KeyPress[]): KeyPress[] => {
   const inverseShiftMap = Object.entries(shiftSpecialChars).reduce((acc, [key, value]) => {
     acc[value] = key;
     return acc;
@@ -235,37 +195,12 @@ const clearKeyPresses = () => {
   activeKeys.clear();
 };
 
-// Resetowanie przy wysyłaniu formularza
-const onSubmit = async () => {
-  loading.value = true;
-  try {
-    const correctedKeyPresses = validateAndCorrectKeyPresses(keyPresses.value);
-
-    const { attempt: newAttempt } = await useFetchWithAuth<{attempt: Attempt}>('/users/add-data', {
-      method: 'POST',
-      body: {
-        secretWord: newSample.value,
-        keyPresses: correctedKeyPresses
-      },
-    });
-
-    attemptsStore.attempts.unshift(newAttempt);
-    clearKeyPresses();
-
-    toast.add({
-      title: 'Poprawnie dodano próbkę danych!',
-    });
-    error.value = '';
-  } catch (err) {
-    const fetchErr = err as FetchError;
-    error.value = fetchErr.data.message;
-    clearKeyPresses();
-
-    toast.add({
-      title: error.value
-    });
-  } finally {
-    loading.value = false;
-  }
-};
+defineExpose({
+  loading,
+  error,
+  keyPresses,
+  newSample,
+  clearKeyPresses,
+  validateAndCorrectKeyPresses,
+});
 </script>

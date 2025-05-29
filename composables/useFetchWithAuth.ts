@@ -34,7 +34,7 @@ export const useFetchWithAuth = async <T>(url: string, options: any = {}): Promi
       if (statusCode === 500 || isConnectionError) {
         throw createError({
           statusCode: 500,
-          statusMessage: 'Błąd połączenia z API',
+          message: 'Błąd połączenia z API',
           fatal: true,
         });
       }

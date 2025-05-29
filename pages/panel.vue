@@ -23,8 +23,12 @@
         <panel-change-user-data :item="item" />
       </template>
 
-      <template #set-secret-word="{ item }">
+      <template #set-secret-word>
         <panel-secret-word />
+      </template>
+
+      <template #password>
+        <panel-try-to-break />
       </template>
     </UTabs>
 

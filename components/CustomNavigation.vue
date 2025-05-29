@@ -49,7 +49,7 @@ const handlePanel = () => {
 
 const handleLogout = () => {
   userStore.logout();
-  router.push('/login');
+  router.push('/auth?mode=login');
 };
 
 const dropdownItems = [

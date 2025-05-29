@@ -33,7 +33,7 @@
         />
       </UFormField>
 
-      <p class="text-sm mx-1">
+      <div class="text-sm mx-1">
         Hasło musi zawierać:<br>
 
         <ul class="space-y-1 mt-1" aria-label="Password requirements">
@@ -53,7 +53,7 @@
             </span>
           </li>
         </ul>
-      </p>
+      </div>
 
       <p v-if="error">
         {{ error }}
