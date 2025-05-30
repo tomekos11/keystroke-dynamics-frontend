@@ -30,6 +30,14 @@
       <template #password>
         <panel-try-to-break />
       </template>
+
+      <template #stats>
+        <panel-stats />
+      </template>
+
+      <template #models>
+        <panel-models />
+      </template>
     </UTabs>
 
     <template v-else>
