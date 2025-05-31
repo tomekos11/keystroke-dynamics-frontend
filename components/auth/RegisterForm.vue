@@ -95,7 +95,7 @@ const repeatPassword = ref('');
 const handleRegister = async () => {
   loading.value = true;
   try {
-    const user = await useFetchWithAuth<User>('/users/register', {
+    const user = await useFetchWithAuth<User>('/auth/register', {
       method: 'POST',
       body: {
         email: email.value,
