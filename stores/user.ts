@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', () => {
   const createdAt = ref<User['createdAt']>(null);
   const updatedAt = ref<User['updatedAt']>(null);
 
-  const secretWord = ref<User['secretWord']>(null);
+  const secretWords = ref<User['secretWords']>(null);
 
   const attempts = ref<User['attempts']>(null);
 
@@ -24,7 +24,7 @@ export const useUserStore = defineStore('user', () => {
     createdAt.value = null;
     updatedAt.value = null;
 
-    secretWord.value = null;
+    secretWords.value = null;
     attempts.value = null;
   };
 
@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
     createdAt.value = user.createdAt;
     updatedAt.value = user.updatedAt;
 
-    secretWord.value = user.secretWord;
+    secretWords.value = user.secretWords || [];
     attempts.value = user.attempts || [];
   };
 
@@ -62,7 +62,7 @@ export const useUserStore = defineStore('user', () => {
     const { data: fetchedUser } = await useAsyncData('user', async () => {
 
       try {
-        const user = await useFetchWithAuth<User>('/users/profile');
+        const user = await useFetchWithAuth<User>('/user/me');
 
         return user;
       } catch (err) {
@@ -93,7 +93,7 @@ export const useUserStore = defineStore('user', () => {
     createdAt,
     updatedAt,
     isLoggedIn,
-    secretWord,
+    secretWords,
     attempts,
     setUser,
     fetchUser,

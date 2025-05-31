@@ -41,6 +41,6 @@ export interface User{
   isActive: boolean | null;
   createdAt: string | null;
   updatedAt: string | null;
-  secretWord: string | null;
+  secretWords: string[] | null;
   attempts: Attempt[] | null;
 }

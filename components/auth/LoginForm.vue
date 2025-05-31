@@ -3,11 +3,13 @@
     <form class="flex flex-col gap-2" @submit.prevent="handleLogin">
       <h2 class="text-2xl font-bold mb-4 text-center">Logowanie</h2>
       <UFormField>
-        <UInput v-model="email" type="email" placeholder="Email" required class="w-[100%]"
+        <UInput
+          v-model="email" type="email" placeholder="Email" required class="w-[100%]"
           icon="i-heroicons-envelope" />
       </UFormField>
       <UFormField>
-        <UInput v-model="password" type="password" placeholder="Hasło" required class="w-[100%]"
+        <UInput
+          v-model="password" type="password" placeholder="Hasło" required class="w-[100%]"
           icon="i-heroicons-lock-closed" />
       </UFormField>
 
@@ -54,6 +56,8 @@ const handleLogin = async () => {
         password: password.value,
       },
     });
+
+    console.log(user);
 
     useUserStore().setUser(user);
 

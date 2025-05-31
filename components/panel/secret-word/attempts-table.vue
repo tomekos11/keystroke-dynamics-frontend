@@ -84,14 +84,6 @@ const attemptsStore = useAttemptsStore();
 const showModal = ref(false);
 const selectedAttempt = ref<Attempt | null>(null);
 
-// const { data: attempts } = await useAsyncData('attempts', async () => {
-//   const res = await useFetchWithAuth<Attempt[]>('/users/attempts');
-//   return res ?? [];
-// }, {
-//   default: () => [],
-//   watch: [],
-// });
-
 const columns: TableColumn<Attempt>[] = [
   {
     id: 'select',

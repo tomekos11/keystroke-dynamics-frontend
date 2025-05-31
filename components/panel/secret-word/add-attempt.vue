@@ -25,6 +25,8 @@
       </UButtonGroup>
     </UForm>
 
+    <UButton icon="i-lucide-refresh-cw" label="Odśwież wpisywanie" class="mt-5" variant="ghost" @click="input?.clearKeyPresses()" />
+
     <panel-secret-word-attempts-table />
 
     <div v-if="error" class="flex items-center gap-2 justify-center text-error mt-3">

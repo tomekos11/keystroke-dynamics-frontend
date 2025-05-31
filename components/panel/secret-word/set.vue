@@ -28,7 +28,7 @@
         :disabled="entries.length >= 30"
         class="text-center text-lg font-mono"
       />
-      <UModal v-model:open="showModal">
+      <UModal v-model:open="showModal" @after:leave="error = ''">
         <UButton
           color="primary"
           variant="subtle"
@@ -134,6 +134,7 @@ const updateSecretWord = async () => {
     showModal.value = false;
   }
   catch(err) {
+    error.value = err.data.message;
     console.error(err);
   }
   finally{
