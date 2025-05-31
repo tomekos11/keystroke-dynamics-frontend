@@ -3,24 +3,12 @@
     <form class="flex flex-col gap-2" @submit.prevent="handleLogin">
       <h2 class="text-2xl font-bold mb-4 text-center">Logowanie</h2>
       <UFormField>
-        <UInput
-          v-model="email"
-          type="email"
-          placeholder="Email"
-          required
-          class="w-[100%]"
-          icon="i-heroicons-envelope"
-        />
+        <UInput v-model="email" type="email" placeholder="Email" required class="w-[100%]"
+          icon="i-heroicons-envelope" />
       </UFormField>
       <UFormField>
-        <UInput
-          v-model="password"
-          type="password"
-          placeholder="Hasło"
-          required
-          class="w-[100%]"
-          icon="i-heroicons-lock-closed"
-        />
+        <UInput v-model="password" type="password" placeholder="Hasło" required class="w-[100%]"
+          icon="i-heroicons-lock-closed" />
       </UFormField>
 
       <p v-if="error">
@@ -33,12 +21,7 @@
 
       <p class="text-center text-sm mt-2">
         Nie masz konta?
-        <UButton
-          variant="link"
-          color="primary"
-          size="sm"
-          @click.prevent="$emit('switch')"
-        >
+        <UButton variant="link" color="primary" size="sm" @click.prevent="$emit('switch')">
           Zarejestruj się
         </UButton>
       </p>
@@ -77,7 +60,7 @@ const handleLogin = async () => {
     toast.add({
       title: 'Zalogowano poprawnie',
     });
-    
+
     router.replace('/');
 
   } catch (err) {
