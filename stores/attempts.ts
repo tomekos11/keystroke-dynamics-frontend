@@ -17,7 +17,7 @@ export const useAttemptsStore = defineStore('attempts', () => {
       const { data, error: fetchError } = await useAsyncData(
         'attempts', // klucz cache
         async () => {
-          return await useFetchWithAuth<Attempt[]>('/users/attempts');
+          return await useFetchWithAuth<Attempt[]>('/attempts');
         },
         {
           default: () => [],

@@ -46,7 +46,7 @@ export const useUserStore = defineStore('user', () => {
     const toast = useToast();
     
     try {
-      const res = await useFetchWithAuth<{user: User}>('/users/logout');
+      const res = await useFetchWithAuth<{user: User}>('/auth/logout');
 
       console.log(res);
       toast.add({

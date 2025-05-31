@@ -117,7 +117,7 @@ const toast = useToast();
 const updateSecretWord = async () => {
   loading.value = true;
   try{ 
-    const res = await useFetchWithAuth('/users/secret-word', {
+    const res = await useFetchWithAuth('/secret-word', {
       method: 'patch',
       body: {
         secretWord: newSecretWord.value

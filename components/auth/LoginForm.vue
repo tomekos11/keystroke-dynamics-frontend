@@ -64,7 +64,7 @@ const router = useRouter();
 const handleLogin = async () => {
   loading.value = true;
   try {
-    const user = await useFetchWithAuth<User>('/users/login', {
+    const user = await useFetchWithAuth<User>('/auth/login', {
       method: 'POST',
       body: {
         email: email.value,

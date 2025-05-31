@@ -192,7 +192,7 @@ const columns: TableColumn<Attempt>[] = [
 
 const onRemove = async (id: number) => {
   try {
-    const { remainingAttempts } = await useFetchWithAuth<{message: string; remainingAttempts: Attempt[]}>(`/users/attempts/${id}`, {
+    const { remainingAttempts } = await useFetchWithAuth<{message: string; remainingAttempts: Attempt[]}>(`/secret-word/attempts/${id}`, {
       method: 'DELETE'
     });
 
