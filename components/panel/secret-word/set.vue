@@ -1,14 +1,15 @@
 <template>
   <div class="text-sm mb-5 mx-auto max-w-[380px]">
     Nie wybrałeś jeszcze swojego sekretnego słowa. Zacznij od uzupełnienia wybranego słowa w poniższym wejściu.
-        
+
     <ul class="mb-6 mt-4 text-left space-y-3">
       <li class="flex items-start gap-2">
         <span class="text-primary text-lg mt-0.5">
           <UIcon name="i-lucide-badge-check" />
         </span>
         <span>
-          Uzupełnienie po raz pierwszy nie jest brane w procesi nauki twojego stylu wpisywania. Po uzupełnieniu pokaże się następna część, w której nauczysz system.
+          Uzupełnienie po raz pierwszy nie jest brane w procesi nauki twojego stylu wpisywania. Po uzupełnieniu pokaże
+          się następna część, w której nauczysz system.
         </span>
       </li>
       <li class="flex items-start gap-2">
@@ -22,20 +23,11 @@
     </ul>
 
     <UButtonGroup>
-      <UInput
-        v-model="newSecretWord"
-        placeholder="Wprowadź sekretne słowo"
-        :disabled="entries.length >= 30"
-        class="text-center text-lg font-mono"
-      />
+      <UInput v-model="newSecretWord" placeholder="Wprowadź sekretne słowo" :disabled="entries.length >= 30"
+        class="text-center text-lg font-mono" />
       <UModal v-model:open="showModal" @after:leave="error = ''">
-        <UButton
-          color="primary"
-          variant="subtle"
-          icon="i-lucide-clipboard"
-          label="Potwierdź"
-          :disabled="!allRequirementsFullfiled"
-        />
+        <UButton color="primary" variant="subtle" icon="i-lucide-clipboard" label="Potwierdź"
+          :disabled="!allRequirementsFullfiled" />
         <template #header>
           Zmiana sekretnego słowa
         </template>
@@ -49,7 +41,7 @@
 
           <div class="flex gap-2 mt-2">
             <UButton label="Anuluj" color="error" variant="ghost" @click="showModal = false" />
-            <UButton label="Potwierdź" variant="ghost" @click="updateSecretWord"/>
+            <UButton label="Potwierdź" variant="ghost" @click="updateSecretWord" />
           </div>
 
           <!-- <div class="text-primary">{{ newSecretWord }}</div> -->
@@ -59,40 +51,37 @@
 
     <p class="text-sm mx-1 mt-5">
       Sekretne słowo musi spełniać warunki:<br>
-    
-      <ul class="space-y-1 mt-1" aria-label="Password requirements">
-        <li
-          v-for="(req, index) in strength"
-          :key="index"
-          class="flex items-center gap-0.5 justify-center"
-          :class="req.met ? 'text-success' : 'text-muted'"
-        >
-          <UIcon :name="req.met ? 'i-lucide-circle-check' : 'i-lucide-circle-x'" class="size-4 shrink-0" />
-        
-          <span class="text-xs font-light">
-            {{ req.text }}
-            <span class="sr-only">
-              {{ req.met ? ' - Requirement met' : ' - Requirement not met' }}
-            </span>
+
+    <ul class="space-y-1 mt-1" aria-label="Password requirements">
+      <li v-for="(req, index) in strength" :key="index" class="flex items-center gap-0.5 justify-center"
+        :class="req.met ? 'text-success' : 'text-muted'">
+        <UIcon :name="req.met ? 'i-lucide-circle-check' : 'i-lucide-circle-x'" class="size-4 shrink-0" />
+
+        <span class="text-xs font-light">
+          {{ req.text }}
+          <span class="sr-only">
+            {{ req.met ? ' - Requirement met' : ' - Requirement not met' }}
           </span>
-        </li>
-      </ul>
+        </span>
+      </li>
+    </ul>
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 // const emit = defineEmits(['completed']);
+import type { SecretWordInfo } from '~/types/types';
 
 const showModal = ref(false);
 const newSecretWord = ref('');
 const error = ref('');
 
 const requirements = [
-  { 
-    regex: /^.{8,15}$/, 
+  {
+    regex: /^.{8,15}$/,
     text: 'Od 8 do 15 znaków',
-    validate: (value: string) => value.length >= 8 && value.length <= 15 
+    validate: (value: string) => value.length >= 8 && value.length <= 15
   },
   { regex: /\d/, text: 'Co najmniej 1 numer' },
   { regex: /[a-z]/, text: 'Co najmniej 1 małą literę' },
@@ -116,28 +105,28 @@ const toast = useToast();
 
 const updateSecretWord = async () => {
   loading.value = true;
-  try{ 
-    const res = await useFetchWithAuth('/secret-word', {
+  try {
+    const { activeSecretWord } = await useFetchWithAuth<{ activeSecretWord: SecretWordInfo }>('/secret-word', {
       method: 'patch',
       body: {
         secretWord: newSecretWord.value
       }
     });
 
-    console.log(res);
-    
+    console.log(activeSecretWord);
+
     toast.add({
       title: 'Poprawnie ustawiłeś secretWord'
     });
 
-    useUserStore().secretWord = newSecretWord.value;
+    useUserStore().activeSecretWord = activeSecretWord;
     showModal.value = false;
   }
-  catch(err) {
+  catch (err) {
     error.value = err.data.message;
     console.error(err);
   }
-  finally{
+  finally {
     loading.value = false;
   }
 
