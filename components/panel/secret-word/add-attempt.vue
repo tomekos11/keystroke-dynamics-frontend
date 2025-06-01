@@ -1,18 +1,17 @@
 <template>
   <div>
     <p class="text-sm mb-5">
-      Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.secretWord }}</span>
+      Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.activeSecretWord?.word }}</span>
     </p>
 
     <UForm :state="{}" @submit="onSubmit">
       <UButtonGroup>
         <input-counting-key-presses ref="input-counting-key-presses" v-model="newSample" />
         <UTooltip>
-          <UButton
-            type="submit" :color="newSample !== userStore.secretWord ? 'neutral' : 'primary'" variant="subtle"
-            icon="i-lucide-clipboard" label="Potwierdź" :disabled="newSample !== userStore.secretWord"
-            :loading="loading" />
-          <template v-if="newSample !== userStore.secretWord" #content>
+          <UButton type="submit" :color="newSample !== userStore.activeSecretWord?.word ? 'neutral' : 'primary'"
+            variant="subtle" icon="i-lucide-clipboard" label="Potwierdź"
+            :disabled="newSample !== userStore.activeSecretWord?.word" :loading="loading" />
+          <template v-if="newSample !== userStore.activeSecretWord?.word" #content>
             <template v-if="!newSample">
               Wpisany ciąg znaków jest pusty
             </template>
@@ -25,7 +24,8 @@
       </UButtonGroup>
     </UForm>
 
-    <UButton icon="i-lucide-refresh-cw" label="Odśwież wpisywanie" class="mt-5" variant="ghost" @click="input?.clearKeyPresses()" />
+    <UButton icon="i-lucide-refresh-cw" label="Odśwież wpisywanie" class="mt-5" variant="ghost"
+      @click="input?.clearKeyPresses()" />
 
     <panel-secret-word-attempts-table />
 

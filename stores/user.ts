@@ -9,9 +9,8 @@ export const useUserStore = defineStore('user', () => {
   const createdAt = ref<User['createdAt']>(null);
   const updatedAt = ref<User['updatedAt']>(null);
 
-  const secretWords = ref<User['secretWords']>(null);
-
-  const attempts = ref<User['attempts']>(null);
+  const activeSecretWord = ref<User['activeSecretWord']>(null);
+  const inactiveSecretWords = ref<User['inactiveSecretWords']>([]);
 
   const isLoggedIn = computed(() => !!email.value);
 
@@ -24,8 +23,8 @@ export const useUserStore = defineStore('user', () => {
     createdAt.value = null;
     updatedAt.value = null;
 
-    secretWords.value = null;
-    attempts.value = null;
+    activeSecretWord.value = null;
+    inactiveSecretWords.value = [];
   };
 
   const setUser = (user: User) => {
@@ -37,49 +36,45 @@ export const useUserStore = defineStore('user', () => {
     createdAt.value = user.createdAt;
     updatedAt.value = user.updatedAt;
 
-    secretWords.value = user.secretWords || [];
-    attempts.value = user.attempts || [];
+    activeSecretWord.value = user.activeSecretWord;
+    inactiveSecretWords.value = user.inactiveSecretWords;
   };
 
   const logout = async () => {
     clear();
     const toast = useToast();
-    
+
     try {
-      const res = await useFetchWithAuth<{user: User}>('/auth/logout');
+      const res = await useFetchWithAuth<{ user: User }>('/auth/logout');
 
       console.log(res);
       toast.add({
-        title: 'Poprawnie wylogowano'
+        title: 'Poprawnie wylogowano',
       });
-    }catch(err) {
+    } catch (err) {
       console.error(err);
     }
   };
 
   const fetchUser = async () => {
-
     const { data: fetchedUser } = await useAsyncData('user', async () => {
-
       try {
         const user = await useFetchWithAuth<User>('/user/me');
-
         return user;
       } catch (err) {
         return {
-          id:null,
+          id: null,
           email: null,
           firstName: null,
           lastName: null,
           isActive: null,
           createdAt: null,
           updatedAt: null,
-          secretWord: null,
-          attempts: null,
+          activeSecretWord: null,
+          inactiveSecretWords: [],
         };
       }
     });
-
 
     if (fetchedUser.value) {
       setUser(fetchedUser.value);
@@ -87,14 +82,16 @@ export const useUserStore = defineStore('user', () => {
   };
 
   return {
+    id,
     email,
     firstName,
     lastName,
     createdAt,
     updatedAt,
+    isActive,
     isLoggedIn,
-    secretWords,
-    attempts,
+    activeSecretWord,
+    inactiveSecretWords,
     setUser,
     fetchUser,
     clear,

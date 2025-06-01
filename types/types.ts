@@ -33,7 +33,15 @@ export interface UserWithoutAttempts {
 }
 
 
-export interface User{
+export interface SecretWordInfo {
+  id: number;
+  word: string;
+  modelCount: number;
+  attemptCount: number;
+  hasActiveModel: boolean;
+}
+
+export interface User {
   id: number | null;
   email: string | null;
   firstName: string | null;
@@ -41,6 +49,7 @@ export interface User{
   isActive: boolean | null;
   createdAt: string | null;
   updatedAt: string | null;
-  secretWords: string[] | null;
-  attempts: Attempt[] | null;
+  activeSecretWord: SecretWordInfo | null;
+  inactiveSecretWords: SecretWordInfo[];
 }
+
