@@ -71,3 +71,60 @@ export interface PredictResult {
   similarity: number;
   error: number;
 }
+
+interface AttemptStats {
+  similarity: number;
+  success: boolean;
+  error: number;
+  createdAt: string;
+  attackerId: number;
+  attackerEmail: string;
+  word: string;
+  wordId: number;
+}
+
+interface Attacker {
+  attackerId: number;
+  attackerEmail: string;
+  attemptsCount: number;
+  successCount: number;
+  avgError: number;
+  avgSimilarity: number;
+  isMine: boolean;
+  attempts: AttemptStats[];
+}
+
+export interface AttackOnMe {
+  secretWordId: number;
+  secretWord: string;
+  attackers: Attacker[];
+
+  totalAttempts: number;
+  totalSuccesses: number;
+  maxSimilarity: number;
+  minSimilarity: number;
+  maxError: number;
+  minError: number;
+}
+
+interface WordAttack {
+  secretWordId: number;
+  secretWord: string;
+  attemptsCount: number;
+  successCount: number;
+  avgError: number;
+  avgSimilarity: number;
+  isMine: boolean;
+  attempts: AttemptStats[];
+}
+
+interface AttackByMe {
+  attackerId: number;
+  attackerEmail: string;
+  words: WordAttack[];
+}
+
+export interface StatsResponse {
+  attacksOnMe: AttackOnMe[];
+  attacksByMe: AttackByMe[];
+}
