@@ -7,6 +7,20 @@
       <div>
         Hasło:
         <span class="font-mono text-emerald-400">{{ attack.secretWord }}</span>
+        <div class="flex mt-1 text-xs text-slate-400 gap-x-4 gap-y-0.5">
+          <div>
+            <div>Próby: <span class="font-mono text-slate-200">{{ attack.totalAttempts }}</span></div>
+            <div>Max podobieństwo: <span class="font-mono text-slate-200">{{ attack.maxSimilarity.toFixed(2) }}%</span></div>
+            <div>Max błąd: <span class="font-mono text-slate-200">{{ attack.maxError.toFixed(3) }}</span></div>
+
+          </div>
+          <div>
+            <div>Sukcesy: <span class="font-mono text-slate-200">{{ attack.totalSuccesses }}</span></div>
+            <div>Min podobieństwo: <span class="font-mono text-slate-200">{{ attack.minSimilarity.toFixed(2) }}%</span></div>
+            <div>Min błąd: <span class="font-mono text-slate-200">{{ attack.minError.toFixed(3) }}</span></div>
+
+          </div>
+        </div>
       </div>
       <div class="text-xs text-sky-400">
         {{ expanded ? 'Zwiń' : 'Rozwiń' }}
@@ -20,6 +34,7 @@
         expanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
       ]"
     >
+      <attacks-attack-comparison-chart v-if="expanded" :attack="attack" />
       <div
         v-for="attacker in attack.attackers"
         :key="attacker.attackerId"
@@ -42,25 +57,47 @@
           <div>Śr. podobieństwo: <span class="font-mono">{{ attacker.avgSimilarity.toFixed(2) }}%</span></div>
         </div>
 
-        <details class="mt-3 bg-slate-800/50 p-3 rounded text-slate-200">
-          <summary class="cursor-pointer font-medium text-sky-400 hover:underline">
+        <details class="mt-4 bg-slate-800/60 p-3 rounded-lg text-slate-200">
+          <summary class="cursor-pointer font-medium text-sky-400 hover:underline text-sm">
             Szczegóły prób ({{ attacker.attempts.length }})
           </summary>
-          <ul class="mt-2 max-h-48 overflow-y-auto space-y-1 text-xs leading-relaxed">
-            <li
-              v-for="attempt in attacker.attempts"
-              :key="attempt.createdAt + attempt.attackerId"
-              class="border-b border-slate-700 pb-1"
-            >
-              {{ attempt.createdAt ? new Date(attempt.createdAt).toLocaleString() : 'brak daty' }},
-              podobieństwo: <span class="font-mono">{{ attempt.similarity.toFixed(2) }}%</span>,
-              błąd: <span class="font-mono">{{ attempt.error.toFixed(3) }}</span>,
-              <span :class="attempt.success ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'">
-                {{ attempt.success ? 'Sukces' : 'Porażka' }}
-              </span>
-            </li>
-          </ul>
+          <div class="mt-3 overflow-x-auto max-h-60 overflow-y-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead class="sticky top-0 bg-slate-800 text-slate-400 border-b border-slate-600">
+                <tr>
+                  <th class="py-1 pr-2">Data</th>
+                  <th class="py-1 pr-2">Podobieństwo</th>
+                  <th class="py-1 pr-2">Błąd</th>
+                  <th class="py-1">Wynik</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="attempt in attacker.attempts"
+                  :key="attempt.createdAt + attempt.attackerId"
+                  class="border-b border-slate-700 hover:bg-slate-700/30"
+                >
+                  <td class="py-1 pr-2 whitespace-nowrap">
+                    {{ attempt.createdAt ? new Date(attempt.createdAt).toLocaleString() : 'brak daty' }}
+                  </td>
+                  <td class="py-1 pr-2 font-mono text-emerald-300">
+                    {{ attempt.similarity.toFixed(2) }}%
+                  </td>
+                  <td class="py-1 pr-2 font-mono text-orange-300">
+                    {{ attempt.error.toFixed(3) }}
+                  </td>
+                  <td
+                    class="py-1 font-semibold"
+                    :class="attempt.success ? 'text-green-400' : 'text-red-400'"
+                  >
+                    {{ attempt.success ? 'Sukces' : 'Porażka' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </details>
+
       </div>
     </div>
   </div>

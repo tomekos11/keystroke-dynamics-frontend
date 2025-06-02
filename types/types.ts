@@ -91,6 +91,13 @@ export interface AttackOnMe {
   secretWordId: number;
   secretWord: string;
   attackers: Attacker[];
+
+  totalAttempts: number;
+  totalSuccesses: number;
+  maxSimilarity: number;
+  minSimilarity: number;
+  maxError: number;
+  minError: number;
 }
 
 interface WordAttack {
