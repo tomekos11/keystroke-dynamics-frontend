@@ -20,6 +20,7 @@
     <div class="flex-1 flex flex-col items-center justify-center gap-10 px-4">
 
       <UCard
+        v-if="userStore.isLoggedIn"
         class="mx-auto mt-16 mb-10 p-4 max-w-lg text-center bg-white/2 shadow-xl rounded-xl border border-primary/10"
         :ui="{
           root: 'p-0',
@@ -34,7 +35,7 @@
           </span>
         </div>
         <h2 class="text-2xl font-bold mb-2 text-primary tracking-tight">Witaj Użytkowniku!</h2>
-        <p v-if="!userStore.secretWord" class="mb-5 text-base text-gray-500">
+        <p v-if="!userStore.activeSecretWord" class="mb-5 text-base text-gray-500">
           Wykryliśmy, że jesteś <span class="font-semibold text-primary">zalogowany</span>, ale nie ustawiłeś jeszcze własnego sekretnego słowa.
         </p>
         <p class="mb-4 text-gray-700">
