@@ -150,13 +150,17 @@
             </UCard>
           </UForm>
 
-          <div class="flex justify-evenly">
+          <div v-if="selectedUser?.activeSecretWord && selectedUser?.activeSecretWord.hasActiveModel" class="flex justify-evenly">
             <div>
-              Ilość prób <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.attemptCount || 0 }}</UBadge>
+              Ilość próbek modelu <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.samplesCount || 0 }}</UBadge>
             </div>
             <div>
-              Ilość modeli <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.modelCount || 0 }}</UBadge>
+              Ilość moich prób <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.myAttemptsCount || 0 }} </UBadge>
             </div>
+            <div>
+              Ilość moich poprawnych prób <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.mySuccessfulAttemptsCount || 0 }}</UBadge>
+            </div>
+
           </div>
 
           <USeparator />

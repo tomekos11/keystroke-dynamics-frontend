@@ -25,12 +25,17 @@ export interface SecretWordInfo {
   id: number;
   word: string;
   modelCount: number;
-  attemptCount: number;
+  samplesCount: number;
   hasActiveModel: boolean;
 }
 
 export interface ActiveSecretWordInfo extends SecretWordInfo {
   attempts: Attempt[]
+}
+
+export interface ActiveSecretWordInfoWithCounts extends SecretWordInfo {
+  myAttemptsCount: number;
+  mySuccessfulAttemptsCount: number;
 }
 
 export interface UserWithoutAttempts {
@@ -41,7 +46,7 @@ export interface UserWithoutAttempts {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  activeSecretWord: SecretWordInfo;
+  activeSecretWord: ActiveSecretWordInfoWithCounts;
 }
 
 export interface User {
@@ -128,4 +133,17 @@ interface AttackByMe {
 export interface StatsResponse {
   attacksOnMe: AttackOnMe[];
   attacksByMe: AttackByMe[];
+}
+
+
+export interface SamplesCorrectness {
+  message: string;
+  
+  stats: {
+    pressAvg: number;
+    pressStd: number;
+    samples: number;
+    waitAvg: number;
+    waitStd: number;
+  }
 }

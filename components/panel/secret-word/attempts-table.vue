@@ -13,6 +13,24 @@
     <h2 class="text-2xl font-bold tracking-tight text-primary drop-shadow-sm mb-6">
       Lista próbek
     </h2>
+
+    <UButtonGroup>
+      <UButton label="Sprawdź poprawność próbek" :loading="samplesCorrectnessLoading" variant="ghost" @click="checkSamplesCorrectness" />
+      <UButton v-if="showSamplesCorrectness" label="Zwiń" color="info" variant="ghost" :loading="samplesCorrectnessLoading" @click="showSamplesCorrectness = false" />
+    </UButtonGroup>
+
+    <UCollapsible v-model:open="showSamplesCorrectness">
+      <div/> 
+      <template #content>
+        <div v-if="samplesCorrectness" class="flex flex-col gap-3 my-3">
+          <UCard>Liczba próbek: <b class="text-primary">{{ samplesCorrectness.stats.samples }}</b></UCard>
+          <UCard>Średni czas kliku [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.pressAvg * 100) / 100 }}</b></UCard>
+          <UCard>Odchylenie standardowe średniego czasu kliku [ms]:  <b class="text-primary">{{ Math.round(samplesCorrectness.stats.pressStd * 100) / 100 }}</b></UCard>
+          <UCard>Średni czas czekania na następny klawisz [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.waitAvg * 100) / 100 }}</b></UCard>
+          <UCard>Odchylenie standardowe czasu czekania na następny klawisz [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.waitStd * 100) / 100 }}</b></UCard>
+        </div>
+      </template>
+    </UCollapsible>
     
     <UTable
       ref="table"
@@ -87,7 +105,7 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui';
 import { UButton, UCheckbox, UIcon } from '#components';
-import type { Attempt } from '~/types/types';
+import type { Attempt, SamplesCorrectness } from '~/types/types';
 
 defineProps<{
   loading: boolean
@@ -226,5 +244,29 @@ watch(selectedAttempt, (val) => {
 
 const userStore = useUserStore();
 
+const samplesCorrectness = ref<SamplesCorrectness | null>(null);
+const showSamplesCorrectness = ref(false);
+const samplesCorrectnessLoading = ref(false);
+
+const checkSamplesCorrectness = async () => {
+  if(!userStore.activeSecretWord) return;
+  samplesCorrectnessLoading.value = true;
+
+  try {
+    const res = await useFetchWithAuth<SamplesCorrectness>('/keystrokes/evaluate', {
+      method: 'post',
+      body: {
+        secretWord: userStore.activeSecretWord.word
+      }
+    });
+
+    samplesCorrectness.value = res;
+    showSamplesCorrectness.value = true;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    samplesCorrectnessLoading.value = false;
+  }
+};
 
 </script>
