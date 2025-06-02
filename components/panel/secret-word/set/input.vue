@@ -15,7 +15,7 @@
           color="primary" variant="subtle" icon="i-lucide-clipboard" label="Potwierdź"
           :disabled="!allRequirementsFullfiled" />
         <template #header>
-          Zmiana sekretnego słowa
+          Sekretne słowo
         </template>
         <template #body>
           Czy na pewno chcesz ustawić sekretne słowo jako
@@ -62,6 +62,8 @@
 <script setup lang="ts">
 import type { ActiveSecretWordInfo, SecretWordInfo } from '~/types/types';
 
+const emit = defineEmits(['update']);
+
 const showModal = ref(false);
 const newSecretWord = ref('');
 const error = ref('');
@@ -96,7 +98,7 @@ const toast = useToast();
 const updateSecretWord = async () => {
   loading.value = true;
   try {
-    const { activeSecretWord } = await useFetchWithAuth<{ activeSecretWord: ActiveSecretWordInfo, inactiveSecretWords: SecretWordInfo[] }>('/secret-word', {
+    const { activeSecretWord, inactiveSecretWords } = await useFetchWithAuth<{ activeSecretWord: ActiveSecretWordInfo, inactiveSecretWords: SecretWordInfo[] }>('/secret-word', {
       method: 'patch',
       body: {
         secretWord: newSecretWord.value
@@ -110,6 +112,9 @@ const updateSecretWord = async () => {
     });
 
     useUserStore().activeSecretWord = activeSecretWord;
+    useUserStore().inactiveSecretWords = inactiveSecretWords;
+    
+    emit('update');
     showModal.value = false;
   }
   catch (err) {

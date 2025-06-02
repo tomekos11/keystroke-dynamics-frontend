@@ -1,19 +1,33 @@
 <template>
-  <div v-if="attemptsStore.attempts && attemptsStore.attempts.length">
+  <UCard
+    v-if="userStore.activeSecretWord"
+    class="bg-transparent"
+    :ui="{
+      root: 'p-0',
+      body: 'sm:px-0 p-0',
+      header: 'sm:px-0 p-0 w-full',
+      footer: 'p-0',
+    }"
+  >
+
+    <h2 class="text-2xl font-bold tracking-tight text-primary drop-shadow-sm mb-6">
+      Lista próbek
+    </h2>
+    
     <UTable
       ref="table"
-      :data="attemptsStore.attempts"
+      :data="userStore.activeSecretWord?.attempts"
       :columns="columns"
+      :loading="loading"
       sticky
+      :empty="`Lista próbek dla dla słowa ${userStore.activeSecretWord.word} jest pusta`"
     >
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>
       </template>
 
       <template #cell-keyPresses="{ row }">
-        <!-- Tu Twój customowy rendering -->
         <span style="color: red;">{{ row.original.keyPresses }}</span>
-        <!-- Możesz tu zrobić dowolny customowy widok, np. badge, tooltip, itp. -->
       </template>
     </UTable>
 
@@ -67,19 +81,20 @@
         </div>
       </template>
     </UModal>
-  </div>
+  </UCard>
 </template>
 
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui';
 import { UButton, UCheckbox, UIcon } from '#components';
 import type { Attempt } from '~/types/types';
-import { useAttemptsStore } from '#imports';
+
+defineProps<{
+  loading: boolean
+}>();
 
 const UBadge = resolveComponent('UBadge');
 const UDropdownMenu = resolveComponent('UDropdownMenu');
-
-const attemptsStore = useAttemptsStore();
 
 const showModal = ref(false);
 const selectedAttempt = ref<Attempt | null>(null);
@@ -188,7 +203,9 @@ const onRemove = async (id: number) => {
       method: 'DELETE'
     });
 
-    attemptsStore.attempts = remainingAttempts;
+    if(userStore.activeSecretWord){
+      userStore.activeSecretWord.attempts = remainingAttempts;
+    }
 
   } catch (err) {
     console.error(err);
@@ -207,7 +224,7 @@ watch(selectedAttempt, (val) => {
   openedDetails.value = Array(val.keyPresses.length).fill(false);
 });
 
+const userStore = useUserStore();
 
-attemptsStore.fetchAttempts();
 
 </script>
