@@ -42,6 +42,12 @@
             </span>
           </div>
 
+          <div>Ustalony próg poprawności:
+            <span class="text-primary">
+              {{ model.threshold }}%
+            </span>
+          </div>
+
           <div>Liczba próbek:
             <span class="text-primary">
               {{ model.samplesUsed }}
@@ -60,6 +66,8 @@
     <div v-if="!models || models.length === 0" class="text-center text-gray-400 py-8">
       Brak modeli do wyświetlenia.
     </div>
+
+    <panel-models-change-model-threshold v-model="selectedModel" />
   </div>
 </template>
 
@@ -67,6 +75,8 @@
 import type { Model } from '~/types/types';
 
 const toast = useToast();
+
+const selectedModel = ref<Model | null>(null);
 
 const { data: models } = useAsyncData('models', () => {
   const res = useFetchWithAuth<Model[]>('/model/list');
@@ -78,7 +88,13 @@ const getDropdownItems = (model: Model, idx: number) => [
     label: 'Zobacz próbki',
     icon: 'i-heroicons-eye',
     color: 'neutral',
-    click: () => showSamples(model)
+    click: () => showSamples()
+  },
+  {
+    label: 'Zmień próg poprawności',
+    color: 'neutral',
+    icon: 'i-lucide-pen',
+    click: () => (selectedModel.value = model)
   },
   {
     label: 'Aktywuj',

@@ -63,6 +63,7 @@ export interface Model {
   samplesUsed: number;
   loss: number;
   secretWord: string;
+  threshold: number;
 }
 
 

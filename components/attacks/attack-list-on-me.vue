@@ -1,7 +1,7 @@
 <template>
   <div class="border border-slate-800 rounded-xl p-4 shadow bg-slate-900 mb-6">
     <div
-      class="text-base font-semibold text-white mb-2 flex items-center justify-between cursor-pointer"
+      class="text-base font-semibold text-white mb-2 flex items-center justify-between cursor-pointer "
       @click="toggleExpanded"
     >
       <div>

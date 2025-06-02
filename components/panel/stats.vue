@@ -21,6 +21,7 @@
           :is-mine="false"
         />
       </div>
+
       <div v-else class="text-center text-slate-400 py-10 italic">
         <UIcon name="lucide:alert-triangle" class="mr-2" />
         Brak danych o atakach na Ciebie.
@@ -34,9 +35,9 @@
           v-for="attack in stats.attacksByMe"
           :key="attack.attackerId"
           :attacker="attack"
-          :is-mine="true"
         />
       </div>
+      
       <div v-else class="text-center text-slate-400 py-10 italic">
         <UIcon name="lucide:alert-triangle" class="mr-2" />
         Nie przeprowadziłeś żadnych ataków.
