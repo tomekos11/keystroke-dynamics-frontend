@@ -8,7 +8,8 @@
       <UButtonGroup>
         <input-counting-key-presses ref="input-counting-key-presses" v-model="newSample" />
         <UTooltip>
-          <UButton type="submit" :color="newSample !== userStore.activeSecretWord?.word ? 'neutral' : 'primary'"
+          <UButton
+            type="submit" :color="newSample !== userStore.activeSecretWord?.word ? 'neutral' : 'primary'"
             variant="subtle" icon="i-lucide-clipboard" label="Potwierdź"
             :disabled="newSample !== userStore.activeSecretWord?.word" :loading="loading" />
           <template v-if="newSample !== userStore.activeSecretWord?.word" #content>
@@ -24,7 +25,8 @@
       </UButtonGroup>
     </UForm>
 
-    <UButton icon="i-lucide-refresh-cw" label="Odśwież wpisywanie" class="mt-5" variant="ghost"
+    <UButton
+      icon="i-lucide-refresh-cw" label="Odśwież wpisywanie" class="mt-5" variant="ghost"
       @click="input?.clearKeyPresses()" />
 
     <panel-secret-word-attempts-table />
