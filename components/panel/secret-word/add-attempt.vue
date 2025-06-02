@@ -1,9 +1,5 @@
 <template>
   <div>
-    <p class="text-sm mb-5">
-      Wybrane przez Ciebie sekretne słowo to: <span class="text-primary">{{ userStore.activeSecretWord?.word }}</span>
-    </p>
-
     <UForm :state="{}" @submit="onSubmit">
       <UButtonGroup>
         <input-counting-key-presses ref="input-counting-key-presses" v-model="newSample" />

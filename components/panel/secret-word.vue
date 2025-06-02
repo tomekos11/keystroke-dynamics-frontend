@@ -2,8 +2,12 @@
   <div class="max-w-4xl mx-auto p-6">
     <div class="mb-8 text-center">
 
-      <panel-secret-word-add-attempt v-if="userStore.activeSecretWord" />
 
+
+      <template v-if="userStore.activeSecretWord">
+        <panel-secret-word-last-selected-secret-word />
+        <panel-secret-word-add-attempt />
+      </template>
       <panel-secret-word-set v-else />
 
     </div>

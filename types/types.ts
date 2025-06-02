@@ -32,13 +32,16 @@ export interface UserWithoutAttempts {
   secretWord: string;
 }
 
-
 export interface SecretWordInfo {
   id: number;
   word: string;
   modelCount: number;
   attemptCount: number;
   hasActiveModel: boolean;
+}
+
+export interface ActiveSecretWordInfo extends SecretWordInfo {
+  attempts: Attempt[]
 }
 
 export interface User {
