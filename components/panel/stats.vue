@@ -4,8 +4,8 @@
     <UTabs
       v-model="view"
       :items="[
-        { label: '📥 Ataki na mnie', value: 'received' },
-        { label: '📤 Moje ataki', value: 'sent' }
+        { label: 'Ataki na mnie', value: 'received' },
+        { label: 'Moje ataki', value: 'sent' }
       ]"
       class="mb-8"
       variant="pill"

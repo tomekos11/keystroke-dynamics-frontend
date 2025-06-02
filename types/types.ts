@@ -87,7 +87,7 @@ interface Attacker {
   attempts: AttemptStats[];
 }
 
-interface AttackOnMe {
+export interface AttackOnMe {
   secretWordId: number;
   secretWord: string;
   attackers: Attacker[];
