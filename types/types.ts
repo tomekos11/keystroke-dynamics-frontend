@@ -52,7 +52,7 @@ export interface User {
   isActive: boolean | null;
   createdAt: string | null;
   updatedAt: string | null;
-  activeSecretWord: SecretWordInfo | null;
+  activeSecretWord: ActiveSecretWordInfo | null;
   inactiveSecretWords: SecretWordInfo[];
 }
 

@@ -27,7 +27,7 @@
 
       <div class="my-2">Lub wpisz nowe</div>
 
-      <panel-secret-word-set-input/>
+      <panel-secret-word-set-input @update="showChangeWordModal = false" />
 
     </template>
   </UModal>
