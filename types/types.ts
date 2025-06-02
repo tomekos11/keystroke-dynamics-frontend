@@ -62,6 +62,7 @@ export interface User {
 }
 
 export interface Model {
+  name: string;
   modelName: string;
   isActive: boolean;
   trainedAt: string;
@@ -135,15 +136,15 @@ export interface StatsResponse {
   attacksByMe: AttackByMe[];
 }
 
+export interface Stats {
+  pressAvg: number;
+  pressStd: number;
+  samples: number;
+  waitAvg: number;
+  waitStd: number;
+}
 
 export interface SamplesCorrectness {
   message: string;
-  
-  stats: {
-    pressAvg: number;
-    pressStd: number;
-    samples: number;
-    waitAvg: number;
-    waitStd: number;
-  }
+  stats: Stats
 }

@@ -1,18 +1,25 @@
 <template>
   <UModal
-    v-model:open="showModal" title="Zmień próg poprawności modelu"
+    v-model:open="showModal" title="Zmiana nazwy modelu"
     :ui="{
       footer: 'justify-end'
     }"
+    @update:open="onOpen"
   >
     <template #body>
-      <div>
-        Nazwa modelu: <b class="text-primary"> {{ selectedModel?.name || selectedModel?.modelName }}</b>
+      <div class="text-sm mb-5">
+        Dotychczasowa Nazwa modelu: <b class="text-primary"> {{ selectedModel?.name }}</b>
       </div>
-      <div class="my-3">
-        Próg poprawności <UBadge variant="soft" :label="`${newThreshold} %`" />
-      </div>
-      <USlider v-model="newThreshold" :min="10" :max="99" :default-value="selectedModel?.threshold" />
+
+      <UFormField label="Nowa Nazwa modelu)">
+        <UInput
+          v-model="newName"
+          type="text"
+          placeholder="Wpisz nazwę modelu"
+          required
+          class="w-[100%]"
+        />
+      </UFormField>
 
     </template>
 
@@ -32,12 +39,6 @@ const selectedModel = defineModel<Model | null>({
   required: true
 });
 
-watch(selectedModel, () => {
-  if(selectedModel.value) {
-    newThreshold.value = selectedModel.value.threshold;
-  }
-});
-
 const showModal = computed({
   get: () => !!selectedModel.value,
   set: (nv) => {
@@ -45,32 +46,36 @@ const showModal = computed({
   }
 });
 
-const newThreshold = ref(0);
+const onOpen = () => {
+  newName.value = selectedModel.value?.name || '';
+};
+
+const newName = ref(selectedModel.value?.name || '');
 
 const updateThreshold = async () => {
   if(!selectedModel.value) return;
 
   try{
-    const res = await useFetchWithAuth<{acceptanceThreshold: number}>('/model/threshold', {
+    const res = await useFetchWithAuth<{name: string}>('/model/name', {
       method: 'patch',
       body: {
         modelName: selectedModel.value.modelName,
-        threshold: newThreshold.value
+        name: newName.value
       }
     });
 
-    selectedModel.value.threshold = res.acceptanceThreshold;
+    selectedModel.value.name = res.name;
 
     toast.add({
-      title: 'Próg poprawności',
-      description: `Zmieniono próg poprawności. Nowy próg wynosi ${res.acceptanceThreshold}%`
+      title: 'Nazwa modelu',
+      description: `Zmieniono nazwę modelu. Nowa nazwa to ${res.name}%`
     });
     console.log(res);
   } catch (err) {
     console.error(err);
     toast.add({
-      title: 'Próg poprawności',
-      description: 'Błąd podczas zmiany progu'
+      title: 'Nazwa modelu',
+      description: 'Błąd podczas zmiany nazwy modelu'
     });
   }
 };

@@ -25,7 +25,9 @@ import {
   CategoryScale,
   LinearScale,
   Legend,
-  Tooltip
+  Tooltip,
+  type BarOptions,
+  type ChartOptions
 } from 'chart.js';
 import type { AttackOnMe } from '~/types/types';
 
@@ -67,8 +69,9 @@ const chartData = computed(() => ({
   ]
 }));
 
-const chartOptions = {
+const chartOptions: ChartOptions = {
   responsive: true,
+  
   plugins: {
     legend: {
       position: 'top',

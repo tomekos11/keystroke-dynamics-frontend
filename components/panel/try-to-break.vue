@@ -273,6 +273,14 @@ const onSubmit = async () => {
       },
     });
 
+    if(selectedUser.value && selectedUser.value.activeSecretWord) {
+      selectedUser.value.activeSecretWord.myAttemptsCount++;
+
+      if(success) {
+        selectedUser.value.activeSecretWord.mySuccessfulAttemptsCount++;
+      }
+    }
+
     // pozniej dodac do statystyk na tym froncie jakos
     input.value.clearKeyPresses();
 

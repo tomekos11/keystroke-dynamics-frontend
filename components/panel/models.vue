@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="grid grid-cols-3 gap-4">
+
       <UCard
         v-for="(model, idx) in models"
         :key="model.modelName"
@@ -8,11 +9,11 @@
       >
         <div class="flex items-center justify-between">
           <div class="font-bold text-lg">
-            Model <span class="text-primary">{{ model.modelName }}</span>
+            Model <span class="text-primary">{{ model.name || model.modelName }}</span>
           </div>
 
           <UDropdownMenu :items="getDropdownItems(model, idx)">
-            <UButton icon="i-lucide-settings" variant="ghost"/>
+            <UButton icon="i-lucide-settings" variant="ghost" color="neutral"/>
 
             <template #item="{ item }">
               <UButton
@@ -36,6 +37,13 @@
         </div>
 
         <div class="text-gray-600 text-sm mt-1">
+
+          <div>Id:
+            <span class="text-primary">
+              {{ model.modelName }}
+            </span>
+          </div>
+
           <div>Data trenowania:
             <span class="text-primary">
               {{ new Date(model.trainedAt).toLocaleString() }}
@@ -67,7 +75,8 @@
       Brak modeli do wyświetlenia.
     </div>
 
-    <panel-models-change-model-threshold v-model="selectedModel" />
+    <panel-models-change-model-name v-model="selectedEditNameModel" />
+    <panel-models-change-model-threshold v-model="selectedEditThresholdModel" />
   </div>
 </template>
 
@@ -76,7 +85,8 @@ import type { Model } from '~/types/types';
 
 const toast = useToast();
 
-const selectedModel = ref<Model | null>(null);
+const selectedEditThresholdModel = ref<Model | null>(null);
+const selectedEditNameModel = ref<Model | null>(null);
 
 const { data: models } = useAsyncData('models', () => {
   const res = useFetchWithAuth<Model[]>('/model/list');
@@ -91,10 +101,16 @@ const getDropdownItems = (model: Model, idx: number) => [
     click: () => showSamples()
   },
   {
+    label: 'Zmień nazwę',
+    color: 'neutral',
+    icon: 'i-lucide-pen',
+    click: () => (selectedEditNameModel.value = model)
+  },
+  {
     label: 'Zmień próg poprawności',
     color: 'neutral',
     icon: 'i-lucide-pen',
-    click: () => (selectedModel.value = model)
+    click: () => (selectedEditThresholdModel.value = model)
   },
   {
     label: 'Aktywuj',
@@ -108,25 +124,6 @@ const getDropdownItems = (model: Model, idx: number) => [
     click: () => handleDelete(model, idx)
   }
 ];
-
-// const dropdownItems = [
-//   {
-//     label: 'Zobacz próbki',
-//     icon: 'i-heroicons-eye', // opcjonalnie
-//     click: () => showSamples(model)
-//   },
-//   {
-//     label: 'Usuń',
-//     icon: 'i-heroicons-trash',
-//     color: 'error',
-//     click: () => handleDelete(model, idx)
-//   },
-//   {
-//     label: 'Aktywuj',
-//     icon: 'i-heroicons-check',
-//     click: () => handleSelect(model)
-//   }
-// ];
 
 const showSamples = () => {
   console.log(1);
