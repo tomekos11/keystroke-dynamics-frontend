@@ -20,18 +20,7 @@ export interface Attempt {
   }
   
 
-
-export interface UserWithoutAttempts {
-  id: number;
-  email: string;
-  firstName: string | null;
-  lastName: string | null;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  secretWord: string;
-}
-
+  
 export interface SecretWordInfo {
   id: number;
   word: string;
@@ -42,6 +31,17 @@ export interface SecretWordInfo {
 
 export interface ActiveSecretWordInfo extends SecretWordInfo {
   attempts: Attempt[]
+}
+
+export interface UserWithoutAttempts {
+  id: number;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  activeSecretWord: SecretWordInfo;
 }
 
 export interface User {
@@ -63,4 +63,11 @@ export interface Model {
   samplesUsed: number;
   loss: number;
   secretWord: string;
+}
+
+
+export interface PredictResult {
+  success: boolean;
+  similarity: number;
+  error: number;
 }

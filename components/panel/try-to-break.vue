@@ -2,13 +2,13 @@
   <div class="space-y-6 p-4">
     <!-- Wyszukiwarka -->
     <UInput
+      v-if="!selectedUserId"
       v-model="searchTerm"
       placeholder="Wyszukaj użytkownika"
       icon="i-heroicons-magnifying-glass"
       class="max-w-96"
     />
 
-    <!-- Lista użytkowników -->
     <div v-if="!selectedUserId" class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <TransitionGroup v-if="filteredUsers && filteredUsers.length" name="list">
         <UCard
@@ -27,9 +27,11 @@
         </UCard>
 
       </TransitionGroup>
+      <div v-else>
+        Brak użytkowników
+      </div>
     </div>
 
-    <!-- Szczegóły użytkownika -->
     <div v-else>
       <UCard>
         <template #header>
@@ -56,34 +58,63 @@
 
             <div class="p-5">
               Sekretne hasło:
-              <b v-if="selectedUser?.secretWord" class="text-primary">
-                {{ selectedUser?.secretWord }}
+              <b v-if="selectedUser?.activeSecretWord" class="text-primary">
+                {{ selectedUser?.activeSecretWord.word }}
               </b>
               <b v-else class="text-error">
                 Brak ustawionego
               </b>
             </div>
-            <UButton
-              v-if="!showForm && selectedUser?.secretWord"
-              label="Spróbuj swoich sił"
-              @click="showForm = true"
-            />
+            <UTooltip>
+              <UButton
+                v-if="!showForm && selectedUser?.activeSecretWord"
+                label="Spróbuj swoich sił"
+                :disabled="!selectedUser?.activeSecretWord?.hasActiveModel"
+                @click="showForm = true"
+              />
+              <template v-if="!selectedUser?.activeSecretWord?.hasActiveModel" #content>
+                Model do tego sekretnego słowa jeszcze nie istnieje
+              </template>
+            </UTooltip>
           </div>
 
           <UForm v-if="showForm" :state="{}" @submit="onSubmit">
-            <UCard class="flex justify-center">
+            <UCard class="flex justify-center bg-slate-950">
               <UFormField>
                 <template #label>
-                  Wpisz sekret <b class="text-primary">{{ selectedUser?.secretWord }}</b>
+                  Wpisz sekret <b class="text-primary">{{ selectedUser?.activeSecretWord?.word }}</b>
                 </template>
   
-                <input-counting-key-presses
-                  ref="input-counting-key-presses"
-                  v-model="secret"
-                  placeholder="Wpisz sekret"
-                  icon="i-lucide-lock-open"
-                  class="mt-2" :color="secret === selectedUser?.secretWord ? 'success' : 'neutral'"
-                />
+                <UButtonGroup class="flex mt-2">
+                  <input-counting-key-presses
+                    ref="input-counting-key-presses"
+                    v-model="secret"
+                    placeholder="Wpisz sekret"
+                    icon="i-lucide-lock-open"
+                    :color="secret === selectedUser?.activeSecretWord?.word ? 'success' : 'neutral'"
+                  />
+
+                  <UTooltip>
+                    <UButton
+                      type="submit"
+                      :color="secret !== selectedUser?.activeSecretWord?.word ? 'neutral' : 'primary'"
+                      variant="subtle"
+                      icon="i-lucide-clipboard"
+                      label="Potwierdź"
+                      :disabled="secret !== selectedUser?.activeSecretWord?.word"
+                      :loading="input?.loading"
+                    />
+                    <template v-if="secret !== selectedUser?.activeSecretWord?.word" #content>
+                      <template v-if="!secret">
+                        Wpisany ciąg znaków jest pusty
+                      </template>
+                      <template v-else>
+                        Wpisany ciąg znaków <strong class="text-primary">{{ secret }}</strong> nie zgadza się z ustawionym
+                        słowem sekretnym
+                      </template>
+                    </template>
+                  </UTooltip>
+                </UButtonGroup>
 
                 <template #help>
                   <ul>
@@ -118,6 +149,15 @@
               </UFormField>
             </UCard>
           </UForm>
+
+          <div class="flex justify-evenly">
+            <div>
+              Ilość prób <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.attemptCount || 0 }}</UBadge>
+            </div>
+            <div>
+              Ilość modeli <UBadge variant="soft">{{ selectedUser?.activeSecretWord?.modelCount || 0 }}</UBadge>
+            </div>
+          </div>
 
           <USeparator />
 
@@ -157,7 +197,7 @@
 
 <script setup lang="ts">
 import type { FetchError } from 'ofetch';
-import type { UserWithoutAttempts } from '~/types/types';
+import type { PredictResult, UserWithoutAttempts } from '~/types/types';
 
 const searchTerm = ref('');
 const selectedUserId = ref<number | null>(null);
@@ -211,7 +251,7 @@ const formatDate = (dateString?: string | null) => {
 const input = useTemplateRef('input-counting-key-presses');
 const toast = useToast();
 
-const onSubmit = () => {
+const onSubmit = async () => {
   if(!input.value) return;
 
   input.value.loading = true;
@@ -221,19 +261,21 @@ const onSubmit = () => {
 
     // TODO dodac endpoint
     console.log(correctedKeyPresses);
-    // const { attempt: newAttempt } = await useFetchWithAuth<{attempt: Attempt}>('/users/add-data', {
-    //   method: 'POST',
-    //   body: {
-    //     secretWord: input.value.newSample,
-    //     keyPresses: correctedKeyPresses
-    //   },
-    // });
+    const { error, similarity, success } = await useFetchWithAuth<PredictResult>('/keystrokes/predict', {
+      method: 'POST',
+      body: {
+        secretWord: input.value.newSample,
+        keyPresses: correctedKeyPresses
+      },
+    });
 
     // pozniej dodac do statystyk na tym froncie jakos
     input.value.clearKeyPresses();
 
     toast.add({
-      title: 'Poprawnie dodano próbkę danych!',
+      title: success ? 'Sukces' : 'Niezgodność',
+      description:  success ? 'Udało ci się napisać sekretne słowo w taki sam sposób jak jego twórca' : 'Sposób wpisania nie zgadza się ze sposobem twórcy',
+      icon: success ? 'i-lucide-circle-check' : 'i-lucide-circle-alert'
     });
     input.value.error = '';
   } catch (err) {

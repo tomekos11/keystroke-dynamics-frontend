@@ -20,7 +20,7 @@
       :columns="columns"
       :loading="loading"
       sticky
-      :empty="`Lista próbek dla dla słowa ${userStore.activeSecretWord.word} jest pusta`"
+      :empty="`Lista próbek dla słowa ${userStore.activeSecretWord.word} jest pusta`"
     >
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>
