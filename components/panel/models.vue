@@ -94,12 +94,12 @@ const { data: models } = useAsyncData('models', () => {
 });
 
 const getDropdownItems = (model: Model, idx: number) => [
-  {
-    label: 'Zobacz próbki',
-    icon: 'i-heroicons-eye',
-    color: 'neutral',
-    click: () => showSamples()
-  },
+  // {
+  //   label: 'Zobacz próbki',
+  //   icon: 'i-heroicons-eye',
+  //   color: 'neutral',
+  //   click: () => showSamples()
+  // },
   {
     label: 'Zmień nazwę',
     color: 'neutral',
@@ -124,10 +124,6 @@ const getDropdownItems = (model: Model, idx: number) => [
     click: () => handleDelete(model, idx)
   }
 ];
-
-const showSamples = () => {
-  console.log(1);
-};
 
 const handleDelete = async (model: Model, index: number) => {
   try {
