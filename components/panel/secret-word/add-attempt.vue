@@ -90,7 +90,7 @@ const onSubmit = async () => {
   try {
     const correctedKeyPresses = input.value.validateAndCorrectKeyPresses(input.value.keyPresses);
 
-    const { attempt: newAttempt } = await useFetchWithAuth<{ attempt: Attempt }>('/secret-word/add-data', {
+    const newAttempt = await useFetchWithAuth<Attempt>('/secret-word/add-data', {
       method: 'POST',
       body: {
         secretWord: newSample.value,
