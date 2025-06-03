@@ -30,67 +30,69 @@
           <UCard>Odchylenie standardowe czasu czekania na następny klawisz [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.waitStd * 100) / 100 }}</b></UCard>
         </div> -->
 
-        <table v-if="samplesCorrectness">
-          <table>
-            <tr>
-              <td colspan="2"/>
-
-              <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
-                {{ stat.key }}
-              </td>
-            </tr>
-
-            <tr>
-              <td rowspan="2">
-                Trzymanie klawisza
-              </td>
-
-              <td>
-                Średni czas
-              </td>
-              
-              <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
-                {{ Math.round(stat.avg * 100) / 100 }}
-              </td>
-            </tr>
-
-            <tr>
-
-              
-              <td>
-                Średnie odchylenie standardowe
-              </td>
-              
-              <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
-                {{ Math.round(stat.std * 100) / 100 }}
-              </td>
-            </tr>
-
-            <tr>
-              <td rowspan="2">
-                Oczekiwania na następny klawisz
-              </td>
-
-              <td>
-                Średni czas oczekiwania
-              </td>
-              
-              <td v-for="(stat, index) in samplesCorrectness.waitStat" :key="index">
-                {{ Math.round(stat.avg * 100) / 100 }}
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                Średnie Odchylenie standardowe
-              </td>
-              
-              <td v-for="(stat, index) in samplesCorrectness.waitStat" :key="index">
-                {{ Math.round(stat.std * 100) / 100 }}
-              </td>
-            </tr>
+        <div class="overflow-auto mb-10 py-2">
+          <table v-if="samplesCorrectness">
+            <table>
+              <tr>
+                <td colspan="2"/>
+  
+                <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
+                  {{ stat.key }}
+                </td>
+              </tr>
+  
+              <tr>
+                <td rowspan="2">
+                  Trzymanie klawisza
+                </td>
+  
+                <td>
+                  Średni czas
+                </td>
+                
+                <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
+                  {{ Math.round(stat.avg * 100) / 100 }}
+                </td>
+              </tr>
+  
+              <tr>
+  
+                
+                <td>
+                  Średnie odchylenie standardowe
+                </td>
+                
+                <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
+                  {{ Math.round(stat.std * 100) / 100 }}
+                </td>
+              </tr>
+  
+              <tr>
+                <td rowspan="2">
+                  Oczekiwania na następny klawisz
+                </td>
+  
+                <td>
+                  Średni czas oczekiwania
+                </td>
+                
+                <td v-for="(stat, index) in samplesCorrectness.waitStat" :key="index">
+                  {{ Math.round(stat.avg * 100) / 100 }}
+                </td>
+              </tr>
+  
+              <tr>
+                <td>
+                  Średnie Odchylenie standardowe
+                </td>
+                
+                <td v-for="(stat, index) in samplesCorrectness.waitStat" :key="index">
+                  {{ Math.round(stat.std * 100) / 100 }}
+                </td>
+              </tr>
+            </table>
           </table>
-        </table>
+        </div>
       </template>
     </UCollapsible>
     
@@ -337,6 +339,6 @@ const checkSamplesCorrectness = async () => {
 
 th, td {
   padding: 7px 10px;
-  border: 1px solid ;
+  border: 1px solid var(--ui-primary);
 }
 </style>
