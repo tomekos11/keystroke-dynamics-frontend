@@ -162,7 +162,7 @@ export interface Stat {
 }
 
 export interface SamplesCorrectness {
-  attempts: KeyPress[];
+  attempts: EvaluateSample[];
   pressStat: Stat[];
   waitStat: Stat[];
 }

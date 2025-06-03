@@ -160,7 +160,7 @@
 
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui';
-import { UButton, UCheckbox, UIcon } from '#components';
+import { UButton, UCheckbox, UIcon, UTooltip } from '#components';
 import type { Attempt, SamplesCorrectness } from '~/types/types';
 
 defineProps<{
@@ -209,15 +209,39 @@ const columns: TableColumn<Attempt>[] = [
     accessorKey: 'isCorrect',
     header: 'Poprawny',
     cell: ({ row }) => {
-      const color = row.getValue('isCorrect') ? 'success' : 'error';
+      const value = row.getValue('isCorrect');
+      const message = row.getValue('message');
 
-      return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
-        h(UIcon, {
-          name:  row.getValue('isCorrect') ? 'i-lucide-check' : 'i-lucide-x'
-        })
+      let color, icon;
+
+      if (value === null || value === undefined) {
+        color = 'neutral';
+        icon = 'i-lucide-help-circle';
+      } else if (value) {
+        color = 'success';
+        icon = 'i-lucide-check';
+      } else {
+        color = 'error';
+        icon = 'i-lucide-x';
+      }
+
+      const badge = h(
+        UBadge,
+        { class: 'capitalize', variant: 'subtle', color },
+        () => h(UIcon, { name: icon })
       );
+
+      if (value === false) {
+        return h(
+          UTooltip,
+          { text: (message ? message.join('\n') : 'xd'), placement: 'top' },
+          () => badge
+        );
+      }
+
+      return badge;
     }
-  }, 
+  },
   {
     accessorKey: 'keyPresses',
     header: 'Ilość naciśniętych klawiszy',
@@ -268,6 +292,13 @@ const columns: TableColumn<Attempt>[] = [
         )
       );
     }
+  },
+  {
+    accessorKey: 'message',
+    header: 'Wiadomość',
+    enableHiding: true,
+    enableSorting: false,
+    cell: () => null,
   }
 ];
 
@@ -318,6 +349,21 @@ const checkSamplesCorrectness = async () => {
 
     samplesCorrectness.value = res;
     showSamplesCorrectness.value = true;
+
+
+    res.attempts.forEach((attempt) => {
+      if(!userStore.activeSecretWord) return;
+
+      const foundAttempt = userStore.activeSecretWord.attempts.find(el => el.id === attempt.id);
+
+      if(foundAttempt) {
+        foundAttempt.isCorrect = !attempt.isAnomalous;
+        foundAttempt.message = attempt.message;
+      }
+    });
+    console.log(res);
+
+    console.log(userStore.activeSecretWord.attempts);
   } catch (err) {
     console.error(err);
   } finally {
