@@ -34,7 +34,7 @@
         <attacks-attack-list-by-me
           v-for="attack in stats.attacksByMe"
           :key="attack.attackerId"
-          :attacker="attack"
+          :attack="attack"
         />
       </div>
       
