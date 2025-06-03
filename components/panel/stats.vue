@@ -1,5 +1,9 @@
 <template>
-  <div class="max-w-5xl mx-auto py-10 px-4 text-slate-100">
+  <div v-if="pending" class="text-center py-8">
+    <UProgress animation="carousel" />
+    <p class="mt-2 text-gray-500">Ładowanie statystyk...</p>
+  </div>
+  <div v-else class="max-w-5xl mx-auto py-10 px-4 text-slate-100">
     <!-- Tabs with Nuxt UI -->
     <UTabs
       v-model="view"
@@ -33,8 +37,8 @@
       <div v-if="stats?.attacksByMe?.length">
         <attacks-attack-list-by-me
           v-for="attack in stats.attacksByMe"
-          :key="attack.attackerId"
-          :attacker="attack"
+          :key="attack.targetId"
+          :attack="attack"
         />
       </div>
       
@@ -51,7 +55,7 @@ import type { StatsResponse } from '~/types/types';
 
 const view = ref<'received' | 'sent'>('received');
 
-const { data: stats } = await useAsyncData<StatsResponse>('stats', () =>
+const { data: stats, pending } =  useAsyncData<StatsResponse>('stats', () =>
   useFetchWithAuth<StatsResponse>('/user/stats').then((res) => res ?? { attacksOnMe: [], attacksByMe: [] })
 );
 </script>

@@ -125,9 +125,9 @@ interface WordAttack {
   attempts: AttemptStats[];
 }
 
-interface AttackByMe {
-  attackerId: number;
-  attackerEmail: string;
+export interface AttackByMe {
+  targetId: number;
+  targetEmail: string;
   words: WordAttack[];
 }
 
