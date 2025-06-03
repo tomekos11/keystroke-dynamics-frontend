@@ -22,14 +22,6 @@
     <UCollapsible v-model:open="showSamplesCorrectness">
       <div/> 
       <template #content>
-        <!-- <div v-if="samplesCorrectness" class="flex flex-col gap-3 my-3">
-          <UCard>Liczba próbek: <b class="text-primary">{{ samplesCorrectness.stats.samples }}</b></UCard>
-          <UCard>Średni czas kliku [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.pressAvg * 100) / 100 }}</b></UCard>
-          <UCard>Odchylenie standardowe średniego czasu kliku [ms]:  <b class="text-primary">{{ Math.round(samplesCorrectness.stats.pressStd * 100) / 100 }}</b></UCard>
-          <UCard>Średni czas czekania na następny klawisz [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.waitAvg * 100) / 100 }}</b></UCard>
-          <UCard>Odchylenie standardowe czasu czekania na następny klawisz [ms]: <b class="text-primary">{{ Math.round(samplesCorrectness.stats.waitStd * 100) / 100 }}</b></UCard>
-        </div> -->
-
         <div class="overflow-auto mb-10 py-2">
           <table v-if="samplesCorrectness">
             <table>
@@ -47,7 +39,7 @@
                 </td>
   
                 <td>
-                  Średni czas
+                  Średni czas [ms]
                 </td>
                 
                 <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
@@ -59,7 +51,7 @@
   
                 
                 <td>
-                  Średnie odchylenie standardowe
+                  Średnie odchylenie standardowe [ms]
                 </td>
                 
                 <td v-for="(stat, index) in samplesCorrectness.pressStat" :key="index">
@@ -73,7 +65,7 @@
                 </td>
   
                 <td>
-                  Średni czas oczekiwania
+                  Średni czas oczekiwania [ms]
                 </td>
                 
                 <td v-for="(stat, index) in samplesCorrectness.waitStat" :key="index">
@@ -83,7 +75,7 @@
   
               <tr>
                 <td>
-                  Średnie Odchylenie standardowe
+                  Średnie Odchylenie standardowe [ms]
                 </td>
                 
                 <td v-for="(stat, index) in samplesCorrectness.waitStat" :key="index">
