@@ -269,7 +269,8 @@ const onSubmit = async () => {
       method: 'POST',
       body: {
         secretWord: input.value.newSample,
-        keyPresses: correctedKeyPresses
+        keyPresses: correctedKeyPresses,
+        targetUserId: selectedUserId.value
       },
     });
 

@@ -125,6 +125,8 @@ const getDropdownItems = (model: Model, idx: number) => [
   }
 ];
 
+const userStore = useUserStore();
+
 const handleDelete = async (model: Model, index: number) => {
   try {
     const res = await useFetchWithAuth<{message: string, success: boolean}>('/keystrokes/delete-model', {
@@ -135,6 +137,11 @@ const handleDelete = async (model: Model, index: number) => {
     });
 
     models.value?.splice(index, 1);
+
+    if(userStore.activeSecretWord) {
+      userStore.activeSecretWord.modelCount--;
+    }
+    
     toast.add({
       title: res.message
     });
