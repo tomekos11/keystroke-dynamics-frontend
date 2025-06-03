@@ -144,7 +144,25 @@ export interface Stats {
   waitStd: number;
 }
 
+export interface EvaluateSample {
+  createdAt: string;
+  updatedAt: string;
+  id: number;
+  isAnomalous: boolean;
+  keyPresses: KeyPress[];
+  message: string[];
+  secretWordId: number;
+  userId: number;
+}
+
+export interface Stat {
+  avg: number;
+  key: string;
+  std: number;
+}
+
 export interface SamplesCorrectness {
-  message: string;
-  stats: Stats
+  attempts: KeyPress[];
+  pressStat: Stat[];
+  waitStat: Stat[];
 }
